@@ -21,5 +21,9 @@ Solar Calendar is a collection of components for Delphi developers and specially
 ### SolarCalendar all themes :
 ![image](https://cloud.githubusercontent.com/assets/6840737/25553022/ff26a106-2cbd-11e7-8744-dba590661fa9.png)
 
+# Developed By
+- Mohamad Khorsandi
+
+
 
 ### [TSolarCalendar].Create Better Applications
