@@ -1,0 +1,15 @@
+#OS junk files
+[Tt]humbs.db
+
+
+#Delphi files
+*.~*
+*.dcu
+*.dof
+*.dsk
+*.cfg
+*.$$$
+*.identcache
+*.dproj.2007
+*.dproj.local
+__history
