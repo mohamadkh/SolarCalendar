@@ -1,3 +1,9 @@
+{*   - February 2018 - Esfand 1396 *}
+{*   - version 3.5.2 *}
+{*   - Bug fix: ** *}
+{*   - Improvement : Add CTRL+D to show today in textbox  *}
+----------------------------------------------------------------------------------------------------------
+
 {*   - December 2016 - Dey 1395 *}
 {*   - Version is now 3.4.27 *}
 {*   - Bug fix : Exception raised when click on prior month *}
