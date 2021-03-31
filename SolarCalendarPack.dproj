@@ -7,7 +7,7 @@
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Package</AppType>
         <FrameworkType>VCL</FrameworkType>
-        <ProjectVersion>18.1</ProjectVersion>
+        <ProjectVersion>19.2</ProjectVersion>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
     </PropertyGroup>
@@ -79,7 +79,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_MinorVer>4</VerInfo_MinorVer>
         <VerInfo_MajorVer>3</VerInfo_MajorVer>
-        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=3.4.23.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=3.4;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileVersion=3.4.23.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=3.4;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <DCC_Description>Solar Calendar v3.4.11</DCC_Description>
         <VerInfo_Release>23</VerInfo_Release>
     </PropertyGroup>

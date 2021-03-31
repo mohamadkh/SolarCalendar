@@ -1,7 +1,15 @@
+{*   - March 2021 - Farvardin 1400 *}
+{*   - version 3.6 *}
+{*   - Bug fix : Fixed a problem with compatibility date formats *}
+{*   - Bug fix : Fixed source code file format *}
+
+----------------------------------------------------------------------------------------------------------
+
 {*   - February 2018 - Esfand 1396 *}
 {*   - version 3.5.2 *}
 {*   - Bug fix: ** *}
 {*   - Improvement : Add CTRL+D to show today in textbox  *}
+
 ----------------------------------------------------------------------------------------------------------
 
 {*   - December 2016 - Dey 1395 *}

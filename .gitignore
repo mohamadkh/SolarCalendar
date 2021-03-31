@@ -13,3 +13,5 @@
 *.dproj.2007
 *.dproj.local
 __history
+exclude_data
+

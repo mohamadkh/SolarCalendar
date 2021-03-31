@@ -1,4 +1,4 @@
-(***** BEGIN LICENSE BLOCK *****
+﻿(***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -25,7 +25,7 @@
 
 
  {*********************************************************}
- {*           Solar Calendar Package v3.5.1              *}
+ {*           Solar Calendar Package v3.6              *}
  {*********************************************************}
 
  {*********************************************************}
@@ -116,7 +116,6 @@
 {*   - Version is now 1.41.8 *}
 
 
-
 {*   - March 2009 - Farvardin 1388 *}
 {*   - Improvement: add Drop method to TSolarDatePicker class *}
 {*   - Improvement: add Close method to TSolarDatePicker class *}
@@ -182,10 +181,8 @@
 {*   - Version is now 2.26.11 *}
 
 
-
 {*   - August 2010 - Shahrivar 1389 *}
 {*   - Version is now 2.27.20 *}
-
 
 
 {*   - June 2012 - Tir 1391 *}
@@ -240,8 +237,13 @@
 
 {*   - February 2018 - Esfand 1396 *}
 {*   - version 3.5.2 *}
-{*   - Bug fix: ** *}
 {*   - Improvement : Add CTRL+D to show today in textbox  *}
+
+
+{*   - March 2021 - Farvardin 1400 *}
+{*   - version 3.6 *}
+{*   - Bug fix : Fixed a problem with compatibility date formats *}
+{*   - Bug fix : Fixed source code file format *}
 
 
 unit SolarCalendarPackage;
@@ -289,7 +291,7 @@ type
 
 const
   {***** Error Block *****}
-  ERR_INVALIDDATEFA = '.تاريخ وارد شده معتبر نمي‌باشد، لطفاً تاريخ صحيح را وارد نمائيد';
+  ERR_INVALIDDATEFA = '.تاريخ وارد شده معتبر نمی‌باشد، لطفاً تاريخ صحيح را وارد نمائيد';
   ERR_INVALIDDATEEN = 'Invalid date, Enter correct date please.';
   {***** Error Block *****}
 
@@ -307,8 +309,8 @@ const
   ST_FANEXTMONTHHINT = 'ماه بعد';
   ST_FAPRIORMONTHHINT = 'ماه قبل';
 
-  ST_ENLAYOUTHINT = 'ميلادي';
-  ST_FACURRENTYEAREDIT = 'سال جاري - كليك كنيد';
+  ST_ENLAYOUTHINT = 'میلادی';
+  ST_FACURRENTYEAREDIT = 'سال جاری - كلیك كنید';
   {***** Hint Block *****}
 
   {***** Color Constants Block *****}
@@ -328,16 +330,16 @@ const
   ST_PERSIANYEAR = '%s سال';
   ST_ENGLISHYEAR = 'Year %s';
   ST_ABOUTSTR = 'Created by : Mohamad Khorsandi';
-  ST_VERSIONINFO = '3.0.1';
+  ST_VERSIONINFO = '3.6';
 
   LayoutSet: array[TDateKind, 1..1] of String = (('C'), ('ش'));
 
   DaySet: array[TDateKind, 1..7] of string = (
-     ('جمعه', 'شنبه', 'يکشنبه', 'دوشنبه', 'سه شنبه', 'چهارشنبه', 'پنج شنبه'),
+     ('جمعه', 'شنبه', 'يکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه'),
      ('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'));
 
   ShortDaySet: array[TDateKind, 1..7] of string = (
-     ('جمعه', 'شنبه', 'يک', 'دو', 'سه', 'چهار', 'پنج'),
+     ('جمعه', 'شنبه', 'یک', 'دو', 'سه', 'چهار', 'پنج'),
      ('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'));
 
 
@@ -351,8 +353,8 @@ const
 
 
   ShortMonthSet: array[TDateKind, 1..12] of string = (
-     ('فروردين', 'ارديبهشت', 'خرداد', 'تير', 'مرداد',
-      'شهريور', 'مهر', 'آبان', 'آذر', 'دي', 'بهمن', 'اسفند'),
+     ('فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد',
+      'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'),
      ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
       'September', 'October', 'November', 'December')
       );
@@ -438,7 +440,7 @@ type
 //    procedure YearUpDownChange(Sender: TObject; var AllowChange: Boolean; NewValue: Smallint; Direction: TUpDownDirection);
     Procedure SetYearButton(Prm_Value: Boolean);
     procedure SetMonthButton(Prm_Value: Boolean);
-    procedure SetHint();
+    procedure SetHeaderButtonsHint();
   end;
 
 
@@ -617,6 +619,7 @@ type
     FDataFieldType: TDataFieldType;
     FDataFieldAutoSaveModified: boolean;
     FChangePersianFridayCaption: boolean;
+    FOutDate: String;
     function GetCanvas: TCanvas;
     procedure ToDayClick(Sender: TObject);
     Procedure CalendarSetObjectMode;
@@ -682,6 +685,7 @@ type
     procedure SetDataSource(const Value: TDataSource);
     procedure DataChange(Sender: TObject);
     procedure SetMonthButton(const Value: Boolean);
+    procedure SetOutDate(const Value: String);
   protected
     FOnLayoutClick: TNotifyEvent;
     FOnNextClick: TNotifyEvent;
@@ -695,7 +699,6 @@ type
     procedure Paint; override;
     procedure DoEnter; override;
   public
-    OutDate: String;
     Constructor Create(AOwner: TComponent); Override;
     Destructor Destroy; override;
     procedure SetParent(AParent: TWinControl); override;
@@ -739,6 +742,7 @@ type
     Property InDate: String Read FInDate Write SetInDate;
     property MonthName: string Read GetMonthName;
     property DayName: string Read GetDayName;
+    property OutDate: String read FOutDate write SetOutDate;
   published
     property About: String read FAbout write SetAbout;
     Property Visible;
@@ -1026,6 +1030,7 @@ type
     class procedure SeparateYMD(ADate: string; var Year, Month, Day: word; ADateKind: TDateKind);
     class function GregorianToSolar(AMiladiDate: string): string; overload;
     class function SolarToGregorian(ASolarDate: string): string; overload;
+    class function FixGregorianDate(ADate: string): string;
   end;
 
 
@@ -1437,40 +1442,13 @@ begin
     end
     else
     begin
-      //2015/05/21
-      //21/05/2015
-      //Result := StrToDateFmtDef('MM/DD/YYYY', '11/11/2011', Now);
-
-{        GetLocaleFormatSettings( GetThreadLocale, FmtStngs );
-        FmtStngs.DateSeparator := #32;
-        FmtStngs.ShortDateFormat := 'dd mmm yyyy';
-        FmtStngs.TimeSeparator := ':';
-        FmtStngs.LongTimeFormat := 'hh:nn';
-
-        s := FormatDateTime( '', Now, FmtStngs );
-        d := VarToDateTime( s );
-}
-//      GetLocaleFormatSettings(GetThreadLocale, lFormatSettings);
-//      FormatSettings.DateSeparator := '/';
-//      FormatSettings.ShortDateFormat := 'yyyy/mm/dd';
-//
-//      dTemp := StrToDate(ADate, lFormatSettings);
-//      sTemp := FormatDateTime('yyyy/mm/dd', dTemp);
-
-//      dTemp := VarToDateTime('10/10/2015');
-
       dTemp := VarToDateTime(ADate);
-//      sTemp := FormatDateTime('yyyy/mm/dd', dTemp);
-//      if TryStrToDate(sTemp, dTemp, ) then
-        DecodeDate(dTemp, lYear, lMonth, lDay);
+      DecodeDate(dTemp, lYear, lMonth, lDay);
 
       YPart := IntToStr(lYear);
       MPart := IntToStr(lMonth);
       DPart := IntToStr(lDay);
 
-      //YPart
-
-//      YPart := DupeString('0', 4 - Length(YPart)) + YPart;
       MPart := DupeString('0', 2 - Length(MPart)) + MPart;
       DPart := DupeString('0', 2 - Length(DPart)) + DPart;
 
@@ -1611,37 +1589,6 @@ begin
     Day := 0;
   end;
 
-
-
-//  if Length(Trim(Date)) <> 0 then
-//  begin
-//    sTemp := Date;
-//
-//    Year := StrToInt(Copy(sTemp, 1, Pos('/', sTemp) - 1));
-//
-//    if Length(IntToStr(Year)) < 4 then
-//      Year := 0;
-//
-//    Delete(sTemp, 1, Pos('/', sTemp));
-//
-//    Month := StrToInt(Copy(sTemp, 1, Pos('/', sTemp) - 1));
-//
-//    if Month > 12 then
-//      Month := 0;
-//
-//    Delete(sTemp, 1, Pos('/', sTemp));
-//
-//    Day := StrToInt(sTemp);
-//
-//    if Day > 31 then
-//      Day := 0;
-//  end
-//  else
-//  begin
-//    Year := 0;
-//    Month := 0;
-//    Day := 0;
-//  end;
 end;
 
 
@@ -1653,31 +1600,6 @@ begin
   SolarToGregorian(dYear, dMonth, dDay);
   Result := ConcatenateDate(dYear, dMonth, dDay, dkGregorian);
 end;
-
-
-
-
-//class function TPublicUtils.GetMiladiYearPartFormat: string;
-//var
-//  sTempStr: string;
-//  sYearStr: string;
-//  iIndex: integer;
-//begin
-//  sTempStr := MiladiFormat();
-//  iIndex := Pos('Y', UpperCase(sTempStr));
-//
-//  if iIndex > 1 then
-//    Delete(sTempStr,  1, Pred(iIndex));
-//
-//  while UpperCase(sTempStr[iIndex]) = 'Y' do
-//  begin
-//    sYearStr := sYearStr + sTempStr[iIndex];
-//    Inc(iIndex);
-//  end;
-//
-//  Result := sYearStr;
-//end;
-
 
 class function TPublicUtils.GetWeekOfTheYear(ADate: string; DateKind: TDateKind): word;
 var
@@ -1860,6 +1782,26 @@ begin
    Result := MiladiDate(Now);
 end;
 
+
+class function TPublicUtils.FixGregorianDate(ADate: string): string;
+var
+  date: TDateTime;
+  fmt: TFormatSettings;
+begin
+//  {$IF CompilerVersion >= 22}
+//    fmt := TFormatSettings.Create;
+//  {$ELSE}
+//    GetLocaleFormatSettings(0, fmt);
+//  {$IFEND}
+//
+//  fmt.ShortDateFormat := 'yyyy/mm/dd';
+//  fmt.DateSeparator := '/';
+
+  result := ADate;
+
+  if TryStrToDate(ADate, date) then
+    result := FormatDateTime('yyyy/mm/dd', date);
+end;
 
 class function TPublicUtils.GotoMonth(ADate: string; AMonth: byte; DateKind: TDateKind): string;
 var
@@ -2353,12 +2295,6 @@ begin
         end;
 
       end;
-
-//  if (FDataLink.DataSource <> nil) and (Length(Trim(sFieldName)) <> 0) then
-//    if FDataLink.DataSet.FindField(sFieldName) <> nil then
-//      if Length(trim(Self.FDataLink.DataSet.FieldByName(Self.DataField).AsString)) <> 0 then
-//        Text := Self.FDataLink.DataSet.FieldByName(Self.DataField).AsString
-
 end;
 
 
@@ -2520,7 +2456,7 @@ Begin
   FMenu.AutoLineReduction := maAutomatic;
 //  FMenu.OwnerDraw := true;
 
-  For iCounter := 1 To 12 do
+  for iCounter := 1 To 12 do
   Begin
     MenuItems := TMenuItem.Create(Self);
     MenuItems.Caption := ShortMonthSet[FDateKind, iCounter];
@@ -2548,6 +2484,7 @@ Begin
   FPrevMenuItem := Item.MenuIndex + 1;
   FCurrMonth := Item.MenuIndex + 1;
   OutDate := TPublicUtils.ConcatenateDate(FCurrYear, FCurrMonth, FCurrDay, FDateKind);
+
   FInDate := OutDate; //1384-03-15
   MonthChanging();
 End;
@@ -2883,6 +2820,8 @@ begin
 end;
 
 procedure TCustomSolarCalendar.SetYear(Value: integer);
+var
+  date: string;
 begin
   if FCurrYear <> Value then
   begin
@@ -2893,6 +2832,7 @@ begin
       FTopPanel.FYear.Caption := Format(ST_ENGLISHYEAR,[IntToStr(FCurrYear)]);
 
     OutDate := TPublicUtils.ConcatenateDate(FCurrYear, FCurrMonth, FCurrDay, FDateKind);
+
     MonthChanging();
   end;
 end;
@@ -2932,6 +2872,7 @@ begin
     FTopPanel.FYear.Caption := Format(ST_ENGLISHYEAR,[IntToStr(FCurrYear)]);
 
   OutDate := TPublicUtils.ConcatenateDate(FCurrYear, FCurrMonth, FCurrDay, FDateKind);
+
   MonthChanging();
   ActiveOnDayClick(true);
 end;
@@ -2956,6 +2897,7 @@ begin
     FTopPanel.FYear.Caption := Format(ST_ENGLISHYEAR,[IntToStr(FCurrYear)]);
 
   OutDate := TPublicUtils.ConcatenateDate(FCurrYear, FCurrMonth, FCurrDay, FDateKind);
+
   MonthChanging();
   ActiveOnDayClick(true);
 end;
@@ -2978,7 +2920,6 @@ begin
     FGrid.OnClick := FOnDayClick;
 end;
 
-
 function TCustomSolarCalendar.InThisRange(ACol, ARow: integer): boolean;
 begin
   Result := false;
@@ -2995,16 +2936,6 @@ begin
   if (FLastCell.Row = 4) and (ARow = 5) then
     Result := true;
 end;
-
-
-{
-function EnableThisDay(Col: integer; EnableMonthSet: TMonthCaptionSet): Boolean;
-var
-  mcTemp: TMonthCaption;
-begin
-  mcTemp := TMonthCaption(Col);
-end;
-}
 
 Procedure TCustomSolarCalendar.GridSelectCell(Sender: TObject; ACol, ARow: Integer; var CanSelect: Boolean);
 begin
@@ -3125,11 +3056,18 @@ Begin
 End;
 
 
-
 Procedure TCustomSolarCalendar.SetOnCellClick(Value: TNotifyEvent);
 Begin
   FGrid.OnClick := Value;
   FOnDayClick := Value;
+end;
+
+procedure TCustomSolarCalendar.SetOutDate(const Value: String);
+begin
+  if FDateKind = dkGregorian then
+    FOutDate := TPublicUtils.FixGregorianDate(Value)
+  else
+    FOutDate := Value;
 end;
 
 procedure TCustomSolarCalendar.SetDataField(const Value: String);
@@ -3185,7 +3123,7 @@ begin
         SDate := TPublicUtils.ConcatenateDate(FCurrYear, FCurrMonth, FCurrDay, FDateKind);
 
         OutDate := SDate;
-        InDate := SDate;
+        FInDate := SDate;
       end
       else
       begin
@@ -3218,7 +3156,7 @@ begin
         MDate := TPublicUtils.ConcatenateDate(FCurrYear, FCurrMonth, FCurrDay, FDateKind);
 
       OutDate := MDate;
-      FInDate := MDate;
+      FInDate := OutDate;
     end;
   end;
   end;
@@ -3228,8 +3166,13 @@ procedure TCustomSolarCalendar.SetDateKind(const Value: TDateKind);
 begin
   if Value <> FDateKind then
   begin
+    if FDateKind = dkGregorian then
+      FInDate := TPublicUtils.FixGregorianDate(FInDate);
+
     FDateKind := Value;
-    SetDate(FSolar, FMiladi, 1);
+
+//    if Length(Trim(FSolar)) <> 0 then
+      SetDate(FSolar, FMiladi, 1);
   end;
 
   CalendarSetObjectMode;
@@ -3263,24 +3206,9 @@ begin
 
   btnLayoutSwitch.Parent := Self;
   btnLayoutSwitch.SetBounds(L+W + 3, T, W , H);
-
-//  L := 2;
-//  H := 15;
-//  W := 21;
-//  T := ((Height - H) div 2 ) + 1;
-//
-//  btnNextYear.Parent := Self;
-//  btnNextYear.SetBounds(L, T, W, H);
-//
-//  btnPriorYear.Parent := Self;
-//  btnPriorYear.SetBounds(Width - W - L, T, W, H);
-//
-//  btnLayoutSwitch.Parent := Self;
-//  btnLayoutSwitch.SetBounds(L+W + 3, T, W + 8, H);
-
 end;
 
-procedure TSolarTopPanel.SetHint();
+procedure TSolarTopPanel.SetHeaderButtonsHint();
 begin
   if FpCalendar.DateKind = dkSolar then
   begin
@@ -3295,11 +3223,11 @@ begin
   else
   if FpCalendar.FDateKind = dkGregorian then
   begin
-    btnNextYear.Hint := ST_ENNEXTYEARHINT;
-    btnPriorYear.Hint := ST_ENPRIORYEARHINT;
+    btnNextYear.Hint := ST_ENPRIORYEARHINT;
+    btnPriorYear.Hint := ST_ENNEXTYEARHINT;
 
-    btnNextMonth.Hint := ST_ENNEXTMONTHHINT;
-    btnPriorMonth.Hint := ST_ENPRIORMONTHHINT;
+    btnNextMonth.Hint := ST_ENPRIORMONTHHINT;
+    btnPriorMonth.Hint := ST_ENNEXTMONTHHINT;
 
     btnLayoutSwitch.Hint := ST_FALAYOUTHINT;
   end;
@@ -3471,7 +3399,7 @@ begin
     MonthSetting();
 
   MonthChanging();
-  FTopPanel.SetHint();
+  FTopPanel.SetHeaderButtonsHint();
 end;
 
 procedure TCustomSolarCalendar.SetDisableCellColor(const Value: TColor);
@@ -3687,7 +3615,6 @@ procedure TCustomSolarCalendar.SetMonthObject(const Value: TMonthObject);
 begin
   if FMonthObject <> Value then
   begin
-//    ClearGridCells();
 
     if FMonthObject = moComboBox then
       FreeAndNil(FMonthCombo);
@@ -3737,6 +3664,7 @@ begin
 
   FCurrMonth := FMonthCombo.ItemIndex + 1;
   OutDate := TPublicUtils.ConcatenateDate(FCurrYear, FCurrMonth, FCurrDay, FDateKind);
+
   FInDate := OutDate; //1384-03-15
   MonthChanging();
 end;
@@ -3782,19 +3710,21 @@ Begin
 end;
 
 procedure TCustomSolarCalendar.SetInDate(const Value: String);
+var
+  date: string;
 begin
   if Length(Trim(Value)) <> 0 then
   begin
     if FDateKind = dkGregorian then
     begin
-      TPublicUtils.SeparateYMD(Value, FCurrYear, FCurrMonth, FCurrDay, FDateKind);
-//      EncodeDate(FCurrYear, FCurrMonth, FCurrDay);
-//      DecodeDate(StrToDate(FormatDateTime(TPublicUtils.MiladiFormat, StrToDate(Value))), FCurrYear, FCurrMonth, FCurrDay);
+      date := TPublicUtils.FixGregorianDate(Value);
+
+      TPublicUtils.SeparateYMD(date, FCurrYear, FCurrMonth, FCurrDay, FDateKind);
 
       if not CheckInputDate(FCurrYear, FCurrMonth, FCurrDay) then
         TPublicUtils.SeparateYMD(OutDate, FCurrYear, FCurrMonth, FCurrDay, FDateKind)
       else
-        FInDate := Value;
+        FInDate := date;
 
       FTopPanel.FYear.Caption := Format(ST_ENGLISHYEAR, [IntToStr(FCurrYear)]);
     end
@@ -3848,7 +3778,7 @@ begin
   else
     FpCalendar.DateKind := dkSolar;
 
-  SetHint();
+  SetHeaderButtonsHint();
 
   Caption := LayoutSet[FpCalendar.FDateKind, 1];
 
@@ -4001,9 +3931,6 @@ begin
 
       Rect.Right := Rect.Left + iWidth;
 
-  //  Rect.Top := Rect.Bottom;
-  //  Inc(Rect.Bottom, iHeight);
-
       Rect.Bottom := Rect.Top + iHeight;
 
       if Rect.Bottom > ScreenHeight then
@@ -4044,9 +3971,6 @@ begin
       try
         FCustomSolarCalendar.InDate := Trim(Text);
 
-    {    if DateKind = dkGregorian then
-          FCustomSolarCalendar.SetDateKind(DateKind);} //87-03-16
-
         if Assigned(FOnLayoutClick) then
           FCustomSolarCalendar.FOnLayoutClick := FOnLayoutClick;
 
@@ -4066,9 +3990,6 @@ begin
       except
         FreeAndNil(FCustomSolarCalendar);
         ShowInvalidDateMsg();
-
-    //    ShowMessage(ERR_INVALIDDATEFA);  //87-03-14
-        //Self.SetFocus;
       end;
 
     // this part was so hard
@@ -4865,7 +4786,10 @@ begin
       DoButtonClick
     else
     if Key in [68, 100] then
+    begin
       Text := TPublicUtils.FillDate(FDateKind);
+      Key := 0;
+    end;
 
 end;
 
@@ -5618,38 +5542,6 @@ begin
   end;
 end;
 
-(*
-procedure TCustomSolarCalendar.YearEditKeyPress(Sender: TObject; var Key: Char);
-begin
-  SystemParametersInfo(SPI_SETBEEP, Word(false), nil, 0);
-
-  if Key = #27 then
-  begin
-    SetYear(FTempYear);
-    SetYearEditVisibility(false);
-  end
-  else
-  if key = #13 then
-  begin
-    if ((FDateKind = dkSolar    ) and (FTopPanel.FYearEdit.yInt > 1340)) or
-       ((FDateKind = dkGregorian) and (FTopPanel.FYearEdit.yInt > 1899)) then
-      SetYear(FTopPanel.FYearEdit.yInt)
-    else
-      SystemParametersInfo(SPI_SETBEEP, Word(true), nil, 0);
-
-    SetYearEditVisibility(false);
-  end
-  else
-
-  {$IFDEF UNICODE}
-  if not CharInSet(Key,['0'..'9', #8, #38]) then
-    Key := #0;
-  {$ELSE}
-  if not(Key in ['0'..'9', #8, #38]) then
-    key := #0;
-  {$ENDIF}
-end;
-*)
 
 procedure TSolarTopPanel.CaptionOnClick(Sender: TObject);
 begin
@@ -5968,7 +5860,7 @@ begin
   FYear := TLabel.Create(Self);
   FYearEdit := TYearEdit.Create(Self);
 
-  SetHint();
+  SetHeaderButtonsHint();
 end;
 
 procedure TSolarTopPanel.Panel_Set_Object_Mode;
@@ -5998,18 +5890,6 @@ begin
     OnContextPopup := FpCalendar.YearEditContextPopup;
   end;
 
-//  with FYearUpDown do
-//  begin
-//    Parent := Self;
-//    SetBounds(72, -5000, 13, 15);
-//    Min := -9999;
-//    Max := 9999;
-//    ShowHint := False;
-//    Thousands := false;
-//    Visible := false;
-//    OnChangingEx := YearUpDownChange;
-//  end;
-
   with FYear do
   begin
     Parent := Self; //FTopPanel;
@@ -6026,10 +5906,6 @@ begin
     ShowHint := True;
     OnClick := FpCalendar.YearOnClick;
   end;
-
-
-//  FPriorButton.Glyph.LoadFromResourceName(HInstance, 'PRIORYEAR');
-//  FNextButton.Glyph.LoadFromResourceName (HInstance, 'NEXTYEAR');
 
 end;
 
@@ -6105,7 +5981,6 @@ begin
 
   if (Key = VK_RIGHT)and (Shift = [ssShift]) then
     FpCalendar.DecYear(1);
-
 
 end;
 
@@ -6455,10 +6330,6 @@ begin
 
     if Assigned(FpPanel.FpCalendar.FOnPrevClick) then
       FpPanel.FpCalendar.FOnPrevClick(Self);
-
-//    if Assigned(FpPanel.FpCalendar.OnPrevClick) then
-//      FpPanel.FpCalendar.FOnPrevClick(Self);
-
   end;
 
   if (Key = VK_UP) and (yInt < yMax)  then
@@ -6470,10 +6341,6 @@ begin
       FpPanel.FpCalendar.FOnNextClick(Self);
   end;
 
-{  if (Key in [VK_Down, VK_UP, VK_Left, VK_Right, VK_Delete, VK_Back, 0..9]) then
-    if Self.CanFocus then
-        Self.SetFocus;
-}
 end;
 
 procedure TYearEdit.KeyPress(var Key: Char);
@@ -6502,7 +6369,6 @@ begin
       FGrid.SetFocus;
     end
     else
-  //  if not(Key in ['0'..'9', #8, #38]) then
     {$IFDEF UNICODE}
     if not CharInSet(Key,['0'..'9', #8, #38]) then
       Key := #0;
@@ -6513,8 +6379,6 @@ begin
 
   end;
 
-//  if Self.CanFocus then
-//    Self.SetFocus;
 end;
 
 procedure TSolarButton.CMMouseEnter(var Message: TMessage);
@@ -6556,13 +6420,11 @@ begin
       FpPanel.ClickPriorBtn(nil);
 
     if FType = btLeftMonth then
-      FpPanel.ClickNextMonthBtn(nil);
-//      FpPanel.FpCalendar.IncMonth;
-
-    if FType = btRightMonth then
       FpPanel.ClickPriorMonthBtn(nil);
 
-//      FpPanel.FpCalendar.DecMonth;
+    if FType = btRightMonth then
+      FpPanel.ClickNextMonthBtn(nil);
+
   end
   else
   begin
