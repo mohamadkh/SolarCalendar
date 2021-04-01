@@ -5260,7 +5260,7 @@ end;
 
 function TSolarMonthCalendar.GetMonth: integer;
 begin
-  TPublicUtils.ResetYMD(Text, FCurrYear, FCurrMonth, FCurrDay, FDateKind);
+  TPublicUtils.ResetYMD(OutDate, FCurrYear, FCurrMonth, FCurrDay, FDateKind);
 
   if FCurrMonth > 0 then
     Result := FCurrMonth
