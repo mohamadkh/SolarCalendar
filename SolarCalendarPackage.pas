@@ -242,8 +242,9 @@
 
 {*   - March 2021 - Farvardin 1400 *}
 {*   - version 3.6 *}
-{*   - Bug fix : Fixed a problem with compatibility date formats *}
+{*   - Bug fix : Fixed a problem with  compatibility date formats *}
 {*   - Bug fix : Fixed source code file format *}
+{*   - Bug fix : Fix SolarMonthCalendar.Month value *}
 
 
 unit SolarCalendarPackage;
