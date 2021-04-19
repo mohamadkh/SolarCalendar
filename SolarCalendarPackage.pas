@@ -2055,23 +2055,15 @@ end;
 
 class function TPublicUtils.IntDayOfWeek(Date: string; DateKind: TDateKind): integer;
 var
-  Year, Month, Day, TempDay: Word;
+  Year, Month, Day: Word;
 begin
   Result := 0;
   SeparateYMD(Date, Year, Month, Day, DateKind);
+
   if DateKind = dkSolar then
   begin
     SolarToGregorian(Year, Month, Day);
-
-    TempDay := DayOfWeek(EncodeDate(Year, Month, Day));
-    if TempDay in [1..5] then
-      Result := TempDay + 2
-    else
-    if TempDay = 6 then
-      Result := 1
-    else
-    if TempDay = 7 then
-      Result := 2;
+    Result := DayOfWeek(EncodeDate(Year, Month, Day)) + 1;
   end
   else
     Result := DayOfWeek(EncodeDate(Year, Month, Day));
