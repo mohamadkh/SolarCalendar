@@ -643,7 +643,7 @@ type
     procedure SetInDate(const Value: String);
     Procedure WMSize(var Message: TWMSize); Message WM_SIZE;
     procedure SetToDay;
-    function GetToDay: string;
+    
     procedure SetAbout(const Value: String);
     function GetPrevMonthDays: integer;
     procedure FillPrevMonthDayCells;
@@ -702,8 +702,8 @@ type
   public
     Constructor Create(AOwner: TComponent); Override;
     Destructor Destroy; override;
+    function GetToDay: string;
     procedure SetParent(AParent: TWinControl); override;
-
     function ConvertDate: string;
     function ConvertMonth: byte;
     function ConvertYear: integer;
