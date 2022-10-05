@@ -2202,7 +2202,7 @@ begin
       begin
         HidePopupForm;
         Result := DefWindowProc(Wnd, Msg, wParam, lParam);
-      end;
+      end
       else
         Result := CallWindowProc(FPopupForm.FOrgFormProc, Wnd, Msg, wParam, lParam);
     end;
