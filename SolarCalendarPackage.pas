@@ -251,6 +251,7 @@ unit SolarCalendarPackage;
 
 //{$D-}    { disable debug information    }
 //{$S+}    { stack overflow checking      }
+{$R-}
 
 {$R Calendar_Images.res}
 
@@ -730,7 +731,7 @@ type
     function GetYearRemainDays: integer; overload;
     function GetYearRemainDays(Date: string; DateKind: TDateKind): integer; overload;
     function GetMonthRemainDay: integer; overload;
-    function GetMonthRemainDay(Date: string; DateKind: TDateKind): integer; overload;    
+    function GetMonthRemainDay(Date: string; DateKind: TDateKind): integer; overload;
     function DayOfWeek: integer; overload;
     function DayOfWeek(Date: string; DateKind: TDateKind): integer; overload;
     function YearScript(Year: integer = 0; Format: TFormat = fLong): string;
@@ -1528,8 +1529,6 @@ begin
       lD := IntToStr(DaysOfMonths[ADateKind, AMonth]);
 
     Result := DateToStr(EncodeDate(StrToInt(lY), StrToInt(lM), StrToInt(lD)));
-//    Result := FormatDateTime(MiladiFormat, EncodeDate(StrToInt(lY), StrToInt(lM), StrToInt(lD)));
-//    Result := lY + '/' + lM + '/' + lD;
   end;
 
   Result := Trim(Result);
@@ -1706,7 +1705,6 @@ begin
   begin
     Dec(Year);
     Month := 12;
-//    Month := Month - lMonth;
   end
   else
     Month := lMonth;
@@ -1787,17 +1785,7 @@ end;
 class function TPublicUtils.FixGregorianDate(ADate: string): string;
 var
   date: TDateTime;
-  fmt: TFormatSettings;
 begin
-//  {$IF CompilerVersion >= 22}
-//    fmt := TFormatSettings.Create;
-//  {$ELSE}
-//    GetLocaleFormatSettings(0, fmt);
-//  {$IFEND}
-//
-//  fmt.ShortDateFormat := 'yyyy/mm/dd';
-//  fmt.DateSeparator := '/';
-
   result := ADate;
 
   if TryStrToDate(ADate, date) then
@@ -1891,8 +1879,6 @@ begin
   Result := (wYear <> 0) and (wMonth >= 1) and (wMonth <= 12) and
             (wDay >= 1) and (wDay <= DaysOfMonth(DateKind, wYear, wMonth));
 end;
-
-
 
 class function TPublicUtils.DaysToDate(DateKind: TDateKind; Year, Month, Day: Word): Word;
 begin
@@ -2146,7 +2132,7 @@ begin
 end;
 
 type
-  TPopupForm = class(TForm) //TCustomForm
+  TPopupForm = class(TForm)  //TCustomForm
   private
     FOwner: TSolarDatePicker;
     FHookedForm: TCustomForm;
@@ -2447,7 +2433,6 @@ Begin
   FMenu.Items.Clear;
   FMenu.AutoHotkeys := maManual;
   FMenu.AutoLineReduction := maAutomatic;
-//  FMenu.OwnerDraw := true;
 
   for iCounter := 1 To 12 do
   Begin
@@ -2573,7 +2558,6 @@ Begin
   ClearGridCurrMonthCells();
 
   iDay := 1;
-  //1111 FGrid.OnSelectCell := nil;
 
   if FDateKind = dkSolar then
   begin
@@ -2591,18 +2575,13 @@ Begin
           else
         else
         if TPublicUtils.IsLeapYear(dkSolar, FCurrYear) then
-          if iDay > 30 then//DaysOfMonths[FDateKind, FPrevMenuItem] + 1 then
+          if iDay > 30 then
             Break;
-{          else
-        else
-        if iDay > DaysOfMonths[FDateKind, FPrevMenuItem] Then
-          Break;}
 
         if FCurrDay = iDay then
         begin
           FGrid.SGr_Col := iCol;
           FGrid.SGr_Row := iRow;
-          //1111 FGrid.OnSelectCell := GridSelectCell;
         end;
 
         FGrid.SGr_Cells[iCol, iRow].Fcl_Text := IntToStr(iDay);
@@ -2610,19 +2589,6 @@ Begin
         if FFirstCell = -1 then
           FFirstCell := iCol;
 
-        {if not IsLeapYear(dkSolar, FCurrYear) then
-          if iDay = DaysOfMonths[FDateKind, FCurrMonth] then
-          begin
-             FLastCell.Col := iCol;
-             FLastCell.Row := iRow;
-          end
-          else
-        else
-          if iDay = 30 then
-          begin
-             FLastCell.Col := iCol;
-             FLastCell.Row := iRow;
-          end;}
          if not TPublicUtils.IsLeapYear(dkSolar, FCurrYear) then
          begin
            if iDay = DaysOfMonths[FDateKind, FCurrMonth] then
@@ -2685,27 +2651,12 @@ Begin
         begin
           FGrid.SGr_Col := iCol;
           FGrid.SGr_Row := iRow;
-          //1111 FGrid.OnSelectCell := GridSelectCell;
         end;
 
         FGrid.SGr_Cells[iCol, iRow].Fcl_Text := IntToStr(iDay);
 
         if FFirstCell = -1 then
           FFirstCell := iCol;
-
-{        if not IsLeapYear(dkGregorian, FCurrYear) then
-          if iDay = DaysOfMonths[FDateKind, FCurrMonth] then
-          begin
-             FLastCell.Col := iCol;
-             FLastCell.Row := iRow;
-          end
-          else
-        else
-          if iDay = 30 then
-          begin
-             FLastCell.Col := iCol;
-             FLastCell.Row := iRow;
-          end;}
 
          if not TPublicUtils.IsLeapYear(dkGregorian, FCurrYear) then
          begin
@@ -2782,8 +2733,6 @@ begin
         Inc(iCounter);
       end;
 
-//      FLastCell.Row := 4;
-//      FLastCell.Col := 0;
   end
   else
   if FLastCell.Row = 4 then
@@ -3815,6 +3764,7 @@ end;
 
 procedure TSolarDatePicker.DoButtonClick;
 begin
+  FButton.Caption := '';
   if Assigned(FOnButtonClick) then
     FOnButtonClick(Self);
 
@@ -3858,8 +3808,6 @@ begin
   FPopupForm.Close;   //popup window
   FDateKind := FCustomSolarCalendar.FDateKind;
 
-//  FreeAndNil(FCustomSolarCalendar);
-
   TPublicUtils.SeparateYMD(Text, FCurrYear, FCurrMonth, FCurrDay, FDateKind);
 
   if not TPublicUtils.IsDateValid(DateKind, FCurrYear, FCurrMonth, FCurrDay) then
@@ -3885,12 +3833,8 @@ begin
 
       HidePopupForm;
 
-  //  if (ScreenWidth > xPos + iWidth) then
-  //  begin
       FPopupForm := TPopupForm.Create(Self);
       FPopupForm.Position := poDesigned;
-
-  //  DoBeforeShow; // for handling BeforeShow event
 
       Rect := Self.BoundsRect; //bounds TSolarDatePicker control not TCustomSolarCalendar
       MapWindowPoints(Self.Parent.Handle, 0, Rect, 2);
@@ -3901,7 +3845,6 @@ begin
       begin
         Rect.Left := xPos;
         Rect.Top := yPos;
-    //    Dec(Rect.Right, iWidth);
       end
       else
         Rect.Top := Rect.Bottom;
@@ -3916,7 +3859,7 @@ begin
       else
       begin
         if Rect.Left < 0 then
-          Rect.Left := Self.Parent.Left + Self.Left + 5; //!
+          Rect.Left := Self.Parent.Left + Self.Left + 5;
 
         if Rect.Right > ScreenWidth then
           Rect.Left := ScreenWidth - iWidth;
@@ -3960,7 +3903,7 @@ begin
       FCustomSolarCalendar.ButtonStyle := FButtonStyle;
       FCustomSolarCalendar.DataFieldType := FDataFieldType;
       FCustomSolarCalendar.DataFieldAutoSaveModified := FDataFieldAutoSaveModified;
-
+//
       try
         FCustomSolarCalendar.InDate := Trim(Text);
 
@@ -3980,12 +3923,12 @@ begin
           FCustomSolarCalendar.OnPrevMonthClick := FOnPrevMonthClick;
 
         FPopupForm.Show;
+
       except
         FreeAndNil(FCustomSolarCalendar);
         ShowInvalidDateMsg();
       end;
 
-    // this part was so hard
     end
     else
       if not TPublicUtils.IsDateValid(DateKind, WYear, WMonth, WDay) then
@@ -5317,7 +5260,6 @@ begin
   Params.ExStyle := WS_EX_TOPMOST or WS_EX_TOOLWINDOW;
   Params.WndParent := Application.Handle;
   BorderStyle := bsNone;
-//  Color := $00BFBFBF;
 end;
 
 destructor TPopupForm.Destroy;
@@ -6094,9 +6036,6 @@ var
 begin
   inherited;
 
-//  if CanFocus then
-//    SetFocus;
-
   if mbLeft = Button then
   begin
     SGr_Pos(X, Y, ACol, ARow);
@@ -6148,12 +6087,6 @@ begin
 
     end;
   end;
-
-//  if (ACol <> -1) and (ARow <> -1) then
-//    if gr_Cells[ACol, ARow].cl_Text = IntToStr(gr_pCalendar.FCurrDay) then
-//      Hint := Format('%s %s %s', [Trim(gr_Cells[ACol, ARow].cl_Text), gr_pCalendar.GetMonthName, IntToStr(gr_pCalendar.FCurrYear)])
-//    else
-//      Hint := '';
 
 end;
 
