@@ -3144,7 +3144,7 @@ begin
   btnNextYear.SetBounds(L + (btnPriorMonth.Width * 3) + 4, T, W, H);
 
   btnPriorYear.Parent := Self;
-  btnPriorYear.SetBounds(Width - (btnPriorMonth.Width * 3) - L - 4, T, W, H);
+  btnPriorYear.SetBounds(Width - (btnPriorMonth.Width * 3) - L + 2, T, W, H);
 
   btnLayoutSwitch.Parent := Self;
   btnLayoutSwitch.SetBounds(L+W + 3, T, W , H);
