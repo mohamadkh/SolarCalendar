@@ -5140,6 +5140,7 @@ end;
 
 procedure TSolarDatePicker.CMEnter(var Message: TCMGotFocus);
 begin
+  inherited;
   DoSelectPartOnFocus(FSelectPartOnFocus);
 end;
 
