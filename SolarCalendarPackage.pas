@@ -247,6 +247,12 @@
 {*   - Bug fix : Fix SolarMonthCalendar.Month value *}
 
 
+{*   - January 2023 - Day 1401 *}
+{*   - version 3.6.3 *}
+{*   - Bug fix : Fixed OnEnter event bug *}
+{*   - Bug fix : Fixed range check error on Delphi 11 *}
+{*   - Bug fix : Fixed UI bug (NextYear button on Header) *}
+
 unit SolarCalendarPackage;
 
 //{$D-}    { disable debug information    }
@@ -5140,8 +5146,8 @@ end;
 
 procedure TSolarDatePicker.CMEnter(var Message: TCMGotFocus);
 begin
-  inherited;
   DoSelectPartOnFocus(FSelectPartOnFocus);
+  inherited;
 end;
 
 
