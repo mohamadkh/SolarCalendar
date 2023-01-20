@@ -854,7 +854,6 @@ type
     procedure SetGlyph(const Value: TGlyphType);
     procedure SetShowDefaultDate(const Value: boolean);
     procedure InsertChar(MainString, Key: string; CaretPos: integer);
-    function DayValidityCheck(Date: string; Key: char): boolean;
     function AddYearPart: string;
     function AddMonthPart: string;
     function AddDayPart: string;
@@ -2049,7 +2048,6 @@ class function TPublicUtils.IntDayOfWeek(Date: string; DateKind: TDateKind): int
 var
   Year, Month, Day: Word;
 begin
-  Result := 0;
   SeparateYMD(Date, Year, Month, Day, DateKind);
 
   if DateKind = dkSolar then
@@ -2768,8 +2766,6 @@ begin
 end;
 
 procedure TCustomSolarCalendar.SetYear(Value: integer);
-var
-  date: string;
 begin
   if FCurrYear <> Value then
   begin
@@ -4120,44 +4116,6 @@ begin
   TPublicUtils.ResetYMD(Text, FCurrYear, FCurrMonth, FCurrDay, FDateKind);
   Text := TPublicUtils.ConcatenateDate(FCurrYear, Value, FCurrDay, FDateKind);
 end;
-
-function TSolarDatePicker.DayValidityCheck(Date: string; Key: char): boolean;
-var
-  Year, Month, Day: string;
-  NumOfDays: integer;
-begin
-  Result := false;
-
-  TPublicUtils.SeparateParts(Date, Year, Month, Day, FDateKind);
-  Day := Day + Key;
-
-  NumOfDays := DaysOfMonths[FDateKind, StrToInt(Month)] + 1;
-  if Length(Day) > 0 then
-  begin
-    if (Length(Day) = 1) and (StrToInt(Day) = 0) then
-      Result := true
-    else
-    if (TPublicUtils.IsLeapYear(FDateKind, StrToInt(Year))) and (StrToInt(Day) > 0) then
-    begin
-      if ((FDateKind = dkSolar) and (StrToInt(Month) = 12)) or
-         ((FDateKind = dkGregorian) and (StrToInt(Month) = 2)) then
-        if (StrToInt(Day) < NumOfDays + 1)  then
-          Result := true
-        else
-      else
-      if ((FDateKind = dkSolar) and (StrToInt(Month) <> 12)) or
-         ((FDateKind = dkGregorian) and (StrToInt(Month) <> 2)) then
-        if (StrToInt(Day) < NumOfDays)  then
-          Result := true
-    end
-    else
-    if (StrToInt(Day) > 0) and (StrToInt(Day) < NumOfDays) then
-      Result := true
-  end
-  else
-    Result := true;
-end;
-
 
 function TSolarDatePicker.AddYearPart: string;
 var
