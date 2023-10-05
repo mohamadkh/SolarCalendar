@@ -247,7 +247,7 @@
 {*   - Bug fix : Fix SolarMonthCalendar.Month value *}
 
 
-{*   - October 2023 - Day 1402 *}
+{*   - October 2023 - Mehr 1402 *}
 {*   - version 3.6.4 *}
 {*   - Bug fix : Fixed OnEnter event bug *}
 {*   - Bug fix : Fixed range check error on Delphi 11 *}
