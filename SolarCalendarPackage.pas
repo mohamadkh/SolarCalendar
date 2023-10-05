@@ -25,7 +25,7 @@
 
 
  {*********************************************************}
- {*           Solar Calendar Package v3.6              *}
+ {*           Solar Calendar Package v3.6.4               *}
  {*********************************************************}
 
  {*********************************************************}
@@ -247,11 +247,13 @@
 {*   - Bug fix : Fix SolarMonthCalendar.Month value *}
 
 
-{*   - January 2023 - Day 1401 *}
-{*   - version 3.6.3 *}
+{*   - October 2023 - Day 1402 *}
+{*   - version 3.6.4 *}
 {*   - Bug fix : Fixed OnEnter event bug *}
 {*   - Bug fix : Fixed range check error on Delphi 11 *}
 {*   - Bug fix : Fixed UI bug (NextYear button on Header) *}
+{*   - Bug fix : Fixed ConvertDate method result *}
+
 
 unit SolarCalendarPackage;
 
