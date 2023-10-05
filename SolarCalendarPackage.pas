@@ -372,7 +372,7 @@ const
   DaysOfMonths: array[TDateKind, 1..12] of Byte = (
     (  31,  31,  31,  31,  31,  31,  30,  30,  30,  30,  30,  29 )
     { Far, Ord, Kho, Tir, Mor, Sha, Meh, Aba, Aza, Day, Bah,^Esf },
-    (  31,  28,  31,  30,  31,  30,  31,  31,  30,  31,  30,  31 )
+    (  31,  29,  31,  30,  31,  30,  31,  31,  30,  31,  30,  31 )
     { Jan,^Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec });
   DaysToMonth: array[TDateKind, 1..13] of Word = (
     (   0,  31,  62,  93, 124, 155, 186, 216, 246, 276, 306, 336, 365 )
