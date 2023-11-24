@@ -6177,18 +6177,18 @@ end;
 
 procedure TSolarTopPanel.ClickNextMonthBtn(Sender: TObject);
 begin
-  FpCalendar.SetNextMonth();
-
-  if Assigned(FpCalendar.FOnNextMonthClick) then
-    FpCalendar.FOnNextMonthClick(Self);
-end;
-
-procedure TSolarTopPanel.ClickPriorMonthBtn(Sender: TObject);
-begin
   FpCalendar.SetPriorMonth();
 
   if Assigned(FpCalendar.FOnNextMonthClick) then
     FpCalendar.FOnPrevMonthClick(Self);
+end;
+
+procedure TSolarTopPanel.ClickPriorMonthBtn(Sender: TObject);
+begin
+  FpCalendar.SetNextMonth();
+
+  if Assigned(FpCalendar.FOnNextMonthClick) then
+    FpCalendar.FOnNextMonthClick(Self);
 end;
 
 { TYearEdit }
