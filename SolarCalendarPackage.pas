@@ -255,6 +255,14 @@
 {*   - Bug fix : Fixed ConvertDate method result *}
 
 
+{*   - December 2023 - Azar 1402 *}
+{*   - version 3.6.6 *}
+{*   - Bug fix : change Next/Prior buttons functions*}
+{*   - Bug fix :  *}
+
+
+
+
 unit SolarCalendarPackage;
 
 //{$D-}    { disable debug information    }
@@ -876,6 +884,7 @@ type
     function ValidateDataSet: boolean;
     procedure SetColorStyle(const Value: TColorStyle);
     procedure DoSelectPartOnFocus(ADatePartType: TDatePartType);
+    procedure SetDataFieldValue;
   Protected
     procedure DoButtonClick; override;
     procedure CMExit(var Message: TCMExit); message CM_EXIT;
@@ -3801,13 +3810,7 @@ begin
 
   Text := FCustomSolarCalendar.OutDate;
 
-  if ValidateDataSet then
-  begin
-    FDataLink.OnDataChange := nil;
-    FDataLink.Edit;
-    FDataLink.DataSet.FieldByName(DataField).Value := Text;
-    FDataLink.OnDataChange := DataChange;
-  end;
+  SetDataFieldValue();
 
   FPopupForm.Close;   //popup window
   FDateKind := FCustomSolarCalendar.FDateKind;
@@ -4082,19 +4085,9 @@ begin
       end;
     end;
 
-    if ValidateDataSet then
-    begin
-      if FDataFieldAutoSaveModified then
-      begin
-        FDataLink.OnDataChange := nil;
-
-        if not (FDataLink.DataSet.State in [dsEdit, dsInsert]) then
-          FDataLink.Edit;
-
-        FDataLink.DataSet.FieldByName(DataField).Value := Text;
-        FDataLink.OnDataChange := DataChange;
-      end;
-    end;
+  if ValidateDataSet then
+    if FDataFieldAutoSaveModified then
+       SetDataFieldValue();
 
   if not bRaisedError then
     inherited;
@@ -4690,10 +4683,26 @@ begin
     if Key in [68, 100] then
     begin
       Text := TPublicUtils.FillDate(FDateKind);
+      SetDataFieldValue();
       Key := 0;
     end;
 
 end;
+
+procedure TSolarDatePicker.SetDataFieldValue();
+begin
+  if ValidateDataSet then
+  begin
+    FDataLink.OnDataChange := nil;
+
+    if not (FDataLink.DataSet.State in [dsEdit, dsInsert]) then
+      FDataLink.Edit;
+
+    FDataLink.DataSet.FieldByName(DataField).Value := Text;
+    FDataLink.OnDataChange := DataChange;
+  end;
+end;
+
 
 procedure TSolarDatePicker.SetShowDefaultDate(const Value: boolean);
 var
