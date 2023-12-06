@@ -258,8 +258,8 @@
 {*   - December 2023 - Azar 1402 *}
 {*   - version 3.6.6 *}
 {*   - Bug fix : change Next/Prior buttons functions*}
-{*   - Bug fix :  *}
-
+{*   - Bug fix : update datafield when DataField set and after pressing the keys CTRL+D *}
+{*   - Bug fix : update datafield when DataField set and after entering the information and leaving the editbox *}
 
 
 
@@ -635,7 +635,6 @@ type
     FDataLink: TFieldDataLink;
     FEnabledMonthButton: Boolean;
     FDataFieldType: TDataFieldType;
-    FDataFieldAutoSaveModified: boolean;
     FChangePersianFridayCaption: boolean;
     FOutDate: String;
     function GetCanvas: TCanvas;
@@ -800,7 +799,6 @@ type
     property DataSource: TDataSource Read GetDataSource Write SetDataSource;
     property DataField: String Read GetDataField Write SetDataField;
     property DataFieldType: TDataFieldType read FDataFieldType write FDataFieldType;
-    property DataFieldAutoSaveModified: boolean read FDataFieldAutoSaveModified write FDataFieldAutoSaveModified;
     property ChangePersianFridayCaption: boolean read FChangePersianFridayCaption write FChangePersianFridayCaption;
   end;
 
@@ -842,7 +840,6 @@ type
     FColorCaptionStart: TColor;
     FColorVacationDay: TColor;
     FColorSelectBrush: TColor;
-    FDataFieldAutoSaveModified: boolean;
     FOnNextMonthClick: TNotifyEvent;
     FOnPrevMonthClick: TNotifyEvent;
     FSelectPartOnFocus: TDatePartType;
@@ -964,9 +961,7 @@ type
     property DataSource: TDataSource Read GetDataSource Write SetDataSource;
     property DataField: String Read GetDataField Write SetDataField;
     property DataFieldType: TDataFieldType read FDataFieldType write FDataFieldType;
-    property DataFieldAutoSaveModified: boolean read FDataFieldAutoSaveModified write FDataFieldAutoSaveModified;
     property SelectPartOnFocus: TDatePartType read FSelectPartOnFocus write FSelectPartOnFocus;
-//    property VisibleLayoutSwitch: Boolean read FVisibleLayoutSwitch write SetVisibleLayoutSwitch;
     property OnButtonClick: TNotifyEvent read FOnButtonClick write FOnButtonClick;
     property OnNextClick: TNotifyEvent read FOnNextClick write FOnNextClick;
     property OnPrevClick: TNotifyEvent read FOnPrevClick write FOnPrevClick;
@@ -3909,7 +3904,6 @@ begin
       FCustomSolarCalendar.ColorStyle := FColorStyle;
       FCustomSolarCalendar.ButtonStyle := FButtonStyle;
       FCustomSolarCalendar.DataFieldType := FDataFieldType;
-      FCustomSolarCalendar.DataFieldAutoSaveModified := FDataFieldAutoSaveModified;
 //
       try
         FCustomSolarCalendar.InDate := Trim(Text);
@@ -4086,8 +4080,7 @@ begin
     end;
 
   if ValidateDataSet then
-    if FDataFieldAutoSaveModified then
-       SetDataFieldValue();
+    SetDataFieldValue();
 
   if not bRaisedError then
     inherited;
