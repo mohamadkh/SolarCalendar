@@ -255,11 +255,12 @@
 {*   - Bug fix : Fixed ConvertDate method result *}
 
 
-{*   - December 2023 - Azar 1402 *}
-{*   - version 3.6.6 *}
-{*   - Bug fix : change Next/Prior buttons functions*}
-{*   - Bug fix : update datafield when DataField set and after pressing the keys CTRL+D *}
-{*   - Bug fix : update datafield when DataField set and after entering the information and leaving the editbox *}
+{*   - March 2024 - Esfand 1402 *}
+{*   - version 3.6.8 *}
+{*   - Bug fix : fix TPublicUtils.IsLeapYear *}
+{*   - Bug fix : change Next/Prior buttons functions *}
+{*   - Bug fix : update DataField when DataField set and after pressing the keys CTRL+D *}
+{*   - Bug fix : update DataField when DataField set and after entering the information and leaving the editbox *}
 
 
 
@@ -379,11 +380,13 @@ const
 
 
   LeapMonth: array[TDateKind] of Byte = (12 {Esfand}, 2 {February});
+
   DaysOfMonths: array[TDateKind, 1..12] of Byte = (
-    (  31,  31,  31,  31,  31,  31,  30,  30,  30,  30,  30,  29 )
+    (  31, 31, 31, 31,  31, 31,  30,  30,  30,  30,  30,  29 )
     { Far, Ord, Kho, Tir, Mor, Sha, Meh, Aba, Aza, Day, Bah,^Esf },
-    (  31,  29,  31,  30,  31,  30,  31,  31,  30,  31,  30,  31 )
+    (  31, 29, 31, 30,  31, 30,  31,  31,  30,  31,  30,  31 )
     { Jan,^Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec });
+
   DaysToMonth: array[TDateKind, 1..13] of Word = (
     (   0,  31,  62,  93, 124, 155, 186, 216, 246, 276, 306, 336, 365 )
     { Far, Ord, Kho, Tir, Mor, Sha, Meh, Aba, Aza, Day, Bah,^Esf, *** },
@@ -1855,7 +1858,7 @@ end;
 class function TPublicUtils.IsLeapYear(DateKind: TDateKind; Year: Word): Boolean;
 begin
   if DateKind = dkSolar then
-    Result := ((((LongInt(Year) + 38) * 31) mod 128) <= 30)
+    Result := (Year mod 33) in [1, 5, 9, 13, 17, 22, 26, 30]
   else
     Result := ((Year mod 4) = 0) and (((Year mod 100) <> 0) or ((Year mod 400) = 0));
 end;
@@ -1929,26 +1932,39 @@ end;
 
 class function TPublicUtils.GregorianToSolar(var Year, Month, Day: Word): Boolean;
 var
+  GregorianYear: integer;
   LeapDay, Days: Integer;
-  PrevGregorianLeap: Boolean;
 begin
   if IsDateValid(dkGregorian, Year, Month, Day) then
   begin
-    PrevGregorianLeap := IsLeapYear(dkGregorian, Year - 1);
-    Days := DaysToDate(dkGregorian, Year, Month, Day);
-    Dec(Year, 622);
-    if IsLeapYear(dkSolar, Year) then
-      LeapDay := 1
+    if Month > 2 Then
+      GregorianYear := (Year + 1)
     else
-      LeapDay := 0;
-    if PrevGregorianLeap and (LeapDay = 1) then
-      Inc(Days, 287)
-    else
-      Inc(Days, 286);
-    if Days > (365 + LeapDay) then
+      GregorianYear := Year;
+
+    Days := 355666 + (365 * Year) + ((GregorianYear + 3) Div 4) - ((GregorianYear + 99) Div 100);
+
+    Days := Days + ((GregorianYear + 399) Div 400) + Day + DaysToMonth[dkGregorian, Month];
+    Year := -1595 + (33 * (days Div 12053));
+    Days := Days Mod 12053;
+    Year := Year + (4 * (Days Div 1461));
+    Days := Days Mod 1461;
+
+    if Days > 365 Then
     begin
-      Inc(Year);
-      Dec(Days, 365 + LeapDay);
+      Year := Year + ((Days - 1) Div 365);
+      Days := (Days - 1) Mod 365;
+    end;
+
+    if Days < 186 Then
+    begin
+      Month := 1 + (Days Div 31);
+      Day := 1 + (Days Mod 31);
+    end
+    else
+    begin
+      Month := 7 + ((Days - 186) Div 30);
+      Day := 1 + ((Days - 186) Mod 30);
     end;
 
     Result := DateOfDay(dkSolar, Days, Year, Month, Day);
@@ -1960,37 +1976,69 @@ end;
 
 class function TPublicUtils.SolarToGregorian(var Year, Month, Day: Word): Boolean;
 var
-  LeapDay, Days: Integer;
-  PrevSolarLeap: Boolean;
+  LeapDay, Days: integer;
+  iCounter: integer;
+  sal_a: array[0..12] of LongInt;
 begin
   if IsDateValid(dkSolar, Year, Month, Day) then
   begin
-    PrevSolarLeap := IsLeapYear(dkSolar, Year-1);
-    Days := DaysToDate(dkSolar, Year, Month, Day);
-    Inc(Year, 621);
+    Year := Year + 1595;
+    Days := -355668 + (365 * Year) + ((Year Div 33) * 8) + (((Year Mod 33) + 3) Div 4) + Day;
 
-    if IsLeapYear(dkGregorian, Year) then
-      LeapDay := 1
+    if Month < 7 Then
+      Days := Days + ((Month - 1) * 31)
     else
-      LeapDay := 0;
+      Days := Days + ((Month - 7) * 30) + 186;
 
-    if PrevSolarLeap and (LeapDay = 1) then
-      Inc(Days, 80)
+    Year := 400 * (Days Div 146097);
+    Days := Days Mod 146097;
+
+   if days > 36524 Then
+   begin
+     Days := days - 1;
+     Year := Year + (100 * (Days Div 36524));
+     Days := Days Mod 36524;
+
+     if days >= 365 Then
+       Days := Days + 1;
+   end;
+
+   Year := Year + (4 * (Days Div 1461));
+   Days := days Mod 1461;
+
+   if Days > 365 Then
+   begin
+     Year := Year + ((Days - 1) Div 365);
+     Days := (days - 1) Mod 365;
+   end;
+
+  Day := days + 1;
+  Month := 1;
+
+  if ((((Year Mod 4) = 0) And ((Year Mod 100) <> 0)) Or ((Year Mod 400) = 0)) Then
+    LeapDay := 29
+  else
+    LeapDay := 28;
+
+  for iCounter := 1 to 12 do
+  begin
+    if ((iCounter = 2) and (Day <= LeapDay)) or
+       ((iCounter <> 2) and (Day <= DaysOfMonths[dkGregorian, iCounter])) Then
+      break;
+
+    Month := Month + 1;
+
+    if iCounter <> 2 then
+      Day := Day - DaysOfMonths[dkGregorian, iCounter]
     else
-      Inc(Days, 79);
+    if iCounter = 2 then
+      Day := Day - LeapDay;
+  end;
 
-    if Days > (365 + LeapDay) then
-    begin
-      Inc(Year);
-      Dec(Days, 365 + LeapDay);
-    end;
-
-    Result := DateOfDay(dkGregorian, Days, Year, Month, Day);
   end
   else
     Result := False;
 end;
-
 
 class function TPublicUtils.IntGetWeekRemainDays(Date: string; DateKind: TDateKind): integer;
 var
