@@ -4,13 +4,16 @@ Solar Calendar is a collection of components for Delphi developers and specially
 
 
 ## Features:
-- Contains components and classes for Borland Delphi 7, 2005, 2006, CodeGear Delphi 2007-2009, Embarcadero RAD Studio 2010, XE-XE10
+- Contains components and classes for Borland Delphi 7, 2005, 2006, CodeGear Delphi 2007-2009, Embarcadero RAD Studio 2010, XE-XE10, Delphi 11.x, Delphi 12.x
 - Switch between Persian and Christian(gregorian) interface and vice versa.
-- DataSet connection
+- Data-aware (DataField)
 - Too many functions for working with Date(IncYear, IncMonth, IncDay, DaysBetween, GotoMonth, ConvertDate, ...)
-- Customizable Interface
-- Auto Check the date entered
+- Use date calculation functions independently (TPublicUtils)
+- Customizable Interface (Include various themes)
+- The entered date is automatically checked (AutoCheck)
+- Customization of exception messages
 - Handle Change layout, Button click events
+- Includes complete guide as a PDF file
 
 ### SolarCalendar in Persian/Solar mode :
 ![image](https://cloud.githubusercontent.com/assets/6840737/25553015/d8c7e128-2cbd-11e7-9f2d-0e4cb2894f42.png)
