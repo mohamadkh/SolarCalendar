@@ -1,7 +1,12 @@
 # SolarCalendar Components
-![image](https://github.com/mohamadkh/SolarCalendar/assets/6840737/13ce0bb3-d32e-42e6-bc3c-9ea35d4824b6) ![image](https://github.com/mohamadkh/SolarCalendar/assets/6840737/de11e633-d4dc-4eea-9b55-8ce47ea8c15c)
+![Embarcadero](https://img.shields.io/badge/Embarcadero-ED1F35.svg?style=for-the-badge&logo=Embarcadero&logoColor=white) ![Delphi](https://img.shields.io/badge/Delphi-B22222?style=for-the-badge&logo=delphi&logoColor=white
+)
 
 ## What is SolarCalendar ?
+[![Delphi Supported Versions](https://img.shields.io/badge/Delphi_supported_versions-Delphi%207,%202007..2010,%20XE..XE8,%2010%20Berlin..11.3%20Alexandria-blue)](https://img.shields.io/badge/Delphi_supported_versions-Delphi%207,%202007..2010,%20XE..XE8,%2010%20Berlin..11.*%20Alexandria_and_Delphi%2012%20Athens-blue) ![GitHub License](https://img.shields.io/github/license/mohamadkh/SolarCalendar) ![GitHub Repo stars](https://img.shields.io/github/stars/mohamadkh/SolarCalendar) 
+![GitHub Release](https://img.shields.io/github/v/release/mohamadkh/SolarCalendar) 
+
+
 Solar Calendar is a collection of components for Delphi developers and specially for Persian developers. The package has got set of components for showing and selecting Persian/Iranian/Solar/Shamsi/Jalali date in Persian/Shamsi and Christian(gregorian) interface and many more functions. I started to write a commercial calendar components for Delphi, then I noticed that my calendar component and its features got bigger and bigger. So I decided to share it with the community in hope it will be useful.
 
 
