@@ -25,7 +25,7 @@
 
 
  {*********************************************************}
- {*           Solar Calendar Package v3.6.4               *}
+ {*           Solar Calendar Package v3.7                 *}
  {*********************************************************}
 
  {*********************************************************}
@@ -263,6 +263,12 @@
 {*   - Bug fix : update DataField when DataField set and after entering the information and leaving the editbox *}
 
 
+{*   - March 2024 - Farvardeen 1403 *}
+{*   - version 3.7 *}
+{*   - Bug fix : fix TPublicUtils.GregorianToSolar function result *}
+{*   - Bug fix : fix current day hint on change layout event  *}
+{*   - Add AutoCompleteOnMonthAndDay property : If the Month or Day section is a single character, a zero character is added to the left side of that section *}
+
 
 unit SolarCalendarPackage;
 
@@ -349,7 +355,7 @@ const
   ST_PERSIANYEAR = '%s سال';
   ST_ENGLISHYEAR = 'Year %s';
   ST_ABOUTSTR = 'Created by : Mohamad Khorsandi';
-  ST_VERSIONINFO = '3.6';
+  ST_VERSIONINFO = '3.7';
 
   LayoutSet: array[TDateKind, 1..1] of String = (('C'), ('ش'));
 
@@ -1933,7 +1939,7 @@ end;
 class function TPublicUtils.GregorianToSolar(var Year, Month, Day: Word): Boolean;
 var
   GregorianYear: integer;
-  LeapDay, Days: Integer;
+  Days: Integer;
 begin
   if IsDateValid(dkGregorian, Year, Month, Day) then
   begin
@@ -1967,7 +1973,7 @@ begin
       Day := 1 + ((Days - 186) Mod 30);
     end;
 
-    Result := DateOfDay(dkSolar, Days, Year, Month, Day);
+//    Result := DateOfDay(dkSolar, Days, Year, Month, Day);
   end
   else
     Result := False;
@@ -1978,7 +1984,6 @@ class function TPublicUtils.SolarToGregorian(var Year, Month, Day: Word): Boolea
 var
   LeapDay, Days: integer;
   iCounter: integer;
-  sal_a: array[0..12] of LongInt;
 begin
   if IsDateValid(dkSolar, Year, Month, Day) then
   begin
@@ -2999,7 +3004,6 @@ begin
         OutDate := TPublicUtils.ConcatenateDate(FCurrYear, FCurrMonth, StrToInt(Trim(FGrid.SGr_Cells[ACol, ARow].Fcl_Text)), FDateKind);
         LastCol := ACol;
         LastRow := ARow;
-        FGrid.Hint := Format('%s %s %s', [Trim(FGrid.SGr_Cells[ACol, ARow].Fcl_Text), GetMonthName, IntToStr(FCurrYear)]);
       end;
     end;
 
@@ -4107,12 +4111,13 @@ var
 begin
   bRaisedError := false;
 
-  if FCheckInputOnExit then
-    if Length(Trim(Text)) <> 0 then
+  if Length(Trim(Text)) <> 0 then
+  begin
+    TPublicUtils.SeparateYMD(Text, Year, Month, Day, FDateKind);
+
+    if FCheckInputOnExit then
     begin
       try
-        TPublicUtils.SeparateYMD(Text, Year, Month, Day, FDateKind);
-
         if not TPublicUtils.IsDateValid(DateKind, Year, Month, Day) then
         begin
           ShowInvalidDateMsg();
@@ -4126,6 +4131,7 @@ begin
         bRaisedError := true;
       end;
     end;
+  end;
 
   if ValidateDataSet then
     SetDataFieldValue();
