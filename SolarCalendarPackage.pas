@@ -265,7 +265,7 @@
 
 {*   - March 2024 - Farvardeen 1403 *}
 {*   - version 3.7 *}
-{*   - Bug fix : fix TPublicUtils.GregorianToSolar function result *}
+{*   - Bug fix : fix TPublicUtils.GregorinanToSolar function result *}
 {*   - Bug fix : fix current day hint on change layout event  *}
 {*   - Add AutoCompleteOnMonthAndDay property : If the Month or Day section is a single character, a zero character is added to the left side of that section *}
 
@@ -853,6 +853,7 @@ type
     FOnPrevMonthClick: TNotifyEvent;
     FSelectPartOnFocus: TDatePartType;
     FShowCalendarWhenReadOnly: boolean;
+    FAutoCompleteOnMonthAndDay: boolean;
     function GetDataField: String;
     function GetDataSource: TDataSource;
     procedure SetDataField(const Value: String);
@@ -971,6 +972,7 @@ type
     property DataField: String Read GetDataField Write SetDataField;
     property DataFieldType: TDataFieldType read FDataFieldType write FDataFieldType;
     property SelectPartOnFocus: TDatePartType read FSelectPartOnFocus write FSelectPartOnFocus;
+    property AutoCompleteOnMonthAndDay: boolean read FAutoCompleteOnMonthAndDay write FAutoCompleteOnMonthAndDay;
     property OnButtonClick: TNotifyEvent read FOnButtonClick write FOnButtonClick;
     property OnNextClick: TNotifyEvent read FOnNextClick write FOnNextClick;
     property OnPrevClick: TNotifyEvent read FOnPrevClick write FOnPrevClick;
@@ -3004,6 +3006,7 @@ begin
         OutDate := TPublicUtils.ConcatenateDate(FCurrYear, FCurrMonth, StrToInt(Trim(FGrid.SGr_Cells[ACol, ARow].Fcl_Text)), FDateKind);
         LastCol := ACol;
         LastRow := ARow;
+        FGrid.Hint := Format('%s %s %s', [Trim(FGrid.SGr_Cells[ACol, ARow].Fcl_Text), GetMonthName(), IntToStr(FCurrYear)]);
       end;
     end;
 
@@ -4131,6 +4134,9 @@ begin
         bRaisedError := true;
       end;
     end;
+
+    if FAutoCompleteOnMonthAndDay and TPublicUtils.IsDateValid(DateKind, Year, Month, Day) then
+      Text := TPublicUtils.ConcatenateDate(Year, Month, Day, DateKind);
   end;
 
   if ValidateDataSet then
