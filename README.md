@@ -3,7 +3,7 @@
 )
 
 ## What is SolarCalendar ?
-![Delphi Supported Versions](https://img.shields.io/badge/Delphi_supported_versions-Delphi%207,%202007..2010,%20XE..XE8,%2010%20Berlin..11.*%20Alexandria_and_Delphi%2012%20Athens-red) ![GitHub License](https://img.shields.io/github/license/mohamadkh/SolarCalendar) ![GitHub Repo stars](https://img.shields.io/github/stars/mohamadkh/SolarCalendar) 
+![Delphi Supported Versions](https://img.shields.io/badge/Delphi_supported_versions-Delphi%207,%202007..2010,%20XE..XE10,%2010%20Berlin..11.*%20Alexandria_and_Delphi%2012%20Athens-red) ![GitHub License](https://img.shields.io/github/license/mohamadkh/SolarCalendar) ![GitHub Repo stars](https://img.shields.io/github/stars/mohamadkh/SolarCalendar) 
 ![GitHub Release](https://img.shields.io/github/v/release/mohamadkh/SolarCalendar) 
 
 
