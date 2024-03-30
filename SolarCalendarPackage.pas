@@ -712,6 +712,7 @@ type
     procedure DataChange(Sender: TObject);
     procedure SetMonthButton(const Value: Boolean);
     procedure SetOutDate(const Value: String);
+    procedure SetGridCellHint(ADay: integer);
   protected
     FOnLayoutClick: TNotifyEvent;
     FOnNextClick: TNotifyEvent;
@@ -3006,7 +3007,8 @@ begin
         OutDate := TPublicUtils.ConcatenateDate(FCurrYear, FCurrMonth, StrToInt(Trim(FGrid.SGr_Cells[ACol, ARow].Fcl_Text)), FDateKind);
         LastCol := ACol;
         LastRow := ARow;
-        FGrid.Hint := Format('%s %s %s', [Trim(FGrid.SGr_Cells[ACol, ARow].Fcl_Text), GetMonthName(), IntToStr(FCurrYear)]);
+        SetGridCellHint(StrToInt(Trim(FGrid.SGr_Cells[ACol, ARow].Fcl_Text)));
+//        FGrid.Hint := Format('%s %s %s', [Trim(FGrid.SGr_Cells[ACol, ARow].Fcl_Text), GetMonthName(), IntToStr(FCurrYear)]);
       end;
     end;
 
@@ -3018,6 +3020,12 @@ begin
   else
     CanSelect := False;
 end;
+
+Procedure TCustomSolarCalendar.SetGridCellHint(ADay: integer);
+begin
+  FGrid.Hint := Format('%d %s %s', [ADay, GetMonthName(), IntToStr(FCurrYear)]);
+end;
+
 
 Destructor TCustomSolarCalendar.Destroy;
 Begin
@@ -3788,6 +3796,7 @@ begin
   Caption := LayoutSet[FpCalendar.FDateKind, 1];
 
   FpCalendar.SetYearEditVisibility(false);
+  FpCalendar.SetGridCellHint(FpCalendar.FCurrDay);
 
   if Assigned(FpCalendar.FOnLayoutClick) then
     FpCalendar.FOnLayoutClick(Self);
