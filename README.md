@@ -45,3 +45,9 @@ In **2008**, the source of this collection was published for the first time on S
 - Mohamad Khorsandi
 
 ### [TSolarCalendar].Create Better Applications
+
+<br>
+
+<p align="left">
+کامپوننت تقویم شمسی(جلالی)/میلادی (دلفی Delphi)
+</p>
