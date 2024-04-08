@@ -7,7 +7,11 @@
 ![GitHub Release](https://img.shields.io/github/v/release/mohamadkh/SolarCalendar) 
 
 
-Solar Calendar is a collection of components for Delphi developers and specially for Persian developers. The package has got set of components for showing and selecting Persian/Iranian/Solar/Shamsi/Jalali date in Persian/Shamsi and Christian(gregorian) interface and many more functions. I started to write a commercial calendar components for Delphi, then I noticed that my calendar component and its features got bigger and bigger. So I decided to share it with the community in hope it will be useful.
+Solar Calendar is a collection of components for Delphi developers and specially for Persian language developers. The package has got set of components for showing and selecting Persian/Iranian/Solar/Shamsi/Jalali date in Persian/Shamsi and Christian(gregorian) interface and many more functions. I started to write a commercial calendar components for Delphi, then I noticed that my calendar component and its features got bigger and bigger. So I decided to share it with the Delphi developers community in hope it will be useful.
+
+
+In **2008**, the source of this collection was published for the first time on SourceForge and Barnamaenevis.org sites.
+
 
 
 ## Features:
