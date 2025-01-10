@@ -270,6 +270,8 @@
 {*   - Add AutoCompleteOnMonthAndDay property : If the Month or Day section is a single character, a zero character is added to the left side of that section *}
 
 
+{*   - January 2025 - Dey 1403 *}
+
 unit SolarCalendarPackage;
 
 //{$D-}    { disable debug information    }
@@ -390,7 +392,7 @@ const
   DaysOfMonths: array[TDateKind, 1..12] of Byte = (
     (  31, 31, 31, 31,  31, 31,  30,  30,  30,  30,  30,  29 )
     { Far, Ord, Kho, Tir, Mor, Sha, Meh, Aba, Aza, Day, Bah,^Esf },
-    (  31, 29, 31, 30,  31, 30,  31,  31,  30,  31,  30,  31 )
+    (  31, 28, 31, 30,  31, 30,  31,  31,  30,  31,  30,  31 )
     { Jan,^Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec });
 
   DaysToMonth: array[TDateKind, 1..13] of Word = (
@@ -4222,10 +4224,11 @@ begin
   iDay := StrToInt(Copy(Text, 9, 2));
 
   if iDay < DaysOfMonths[DateKind, Self.Month] then
-    Inc(iDay);
-
-  if TPublicUtils.IsLeapYear(FDateKind, GetYear) and (iDay = 29) then
-    Inc(iDay);
+    Inc(iDay)
+  else
+  if TPublicUtils.IsLeapYear(DateKind, GetYear) then
+    if (LeapMonth[DateKind] = GetMonth) and (iDay <= DaysOfMonths[DateKind, Self.Month]) then
+      Inc(iDay);
 
   if iDay < 10 then
     Result := '0' + IntToStr(iDay)
