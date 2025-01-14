@@ -271,6 +271,10 @@
 
 
 {*   - January 2025 - Dey 1403 *}
+{*   - version 3.7.2 *}
+{*   - Bug fix : Fixed the bug of increasing the Day part by pressing the up arrow key(TSolarDatePicker) *}
+{*   - Bug fix : Access Violation When the calendar button is pressed on Windows 64 bit *}
+
 
 unit SolarCalendarPackage;
 
@@ -1978,7 +1982,7 @@ begin
       Day := 1 + ((Days - 186) Mod 30);
     end;
 
-//    Result := DateOfDay(dkSolar, Days, Year, Month, Day);
+    result := true;
   end
   else
     Result := False;
@@ -2003,48 +2007,49 @@ begin
     Year := 400 * (Days Div 146097);
     Days := Days Mod 146097;
 
-   if days > 36524 Then
-   begin
-     Days := days - 1;
-     Year := Year + (100 * (Days Div 36524));
-     Days := Days Mod 36524;
+    if days > 36524 Then
+    begin
+      Days := days - 1;
+      Year := Year + (100 * (Days Div 36524));
+      Days := Days Mod 36524;
 
-     if days >= 365 Then
-       Days := Days + 1;
-   end;
+      if days >= 365 Then
+        Days := Days + 1;
+    end;
 
-   Year := Year + (4 * (Days Div 1461));
-   Days := days Mod 1461;
+    Year := Year + (4 * (Days Div 1461));
+    Days := days Mod 1461;
 
-   if Days > 365 Then
-   begin
-     Year := Year + ((Days - 1) Div 365);
-     Days := (days - 1) Mod 365;
-   end;
+    if Days > 365 Then
+    begin
+      Year := Year + ((Days - 1) Div 365);
+      Days := (days - 1) Mod 365;
+    end;
 
-  Day := days + 1;
-  Month := 1;
+    Day := days + 1;
+    Month := 1;
 
-  if ((((Year Mod 4) = 0) And ((Year Mod 100) <> 0)) Or ((Year Mod 400) = 0)) Then
-    LeapDay := 29
-  else
-    LeapDay := 28;
-
-  for iCounter := 1 to 12 do
-  begin
-    if ((iCounter = 2) and (Day <= LeapDay)) or
-       ((iCounter <> 2) and (Day <= DaysOfMonths[dkGregorian, iCounter])) Then
-      break;
-
-    Month := Month + 1;
-
-    if iCounter <> 2 then
-      Day := Day - DaysOfMonths[dkGregorian, iCounter]
+    if ((((Year Mod 4) = 0) And ((Year Mod 100) <> 0)) Or ((Year Mod 400) = 0)) Then
+      LeapDay := 29
     else
-    if iCounter = 2 then
-      Day := Day - LeapDay;
-  end;
+      LeapDay := 28;
 
+    for iCounter := 1 to 12 do
+    begin
+      if ((iCounter = 2) and (Day <= LeapDay)) or
+         ((iCounter <> 2) and (Day <= DaysOfMonths[dkGregorian, iCounter])) Then
+        break;
+
+      Month := Month + 1;
+
+      if iCounter <> 2 then
+        Day := Day - DaysOfMonths[dkGregorian, iCounter]
+      else
+      if iCounter = 2 then
+        Day := Day - LeapDay;
+    end;
+
+    result := true;
   end
   else
     Result := False;
@@ -2204,7 +2209,7 @@ type
   private
     FOwner: TSolarDatePicker;
     FHookedForm: TCustomForm;
-    FOrgFormProc: Pointer;
+    FOrgFormProc: pointer;
     procedure HookForm;
     procedure UnhookForm;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -2221,27 +2226,30 @@ type
 var
   FPopupForm: TPopupForm;
 
+
 procedure Register;
 begin
-  RegisterComponents('Solar Calendar', [TSolarDatePicker,
-                                        TSolarMonthCalendar]);
+  RegisterComponents('Solar Calendar', [TSolarDatePicker, TSolarMonthCalendar]);
 end;
 
 { Helper functions }
-procedure HidePopupForm;
+procedure HidePopupForm();
 begin
-  if  Assigned(FPopupForm) then
+  if Assigned(FPopupForm) then
   begin
     FPopupForm.UnhookForm;
     FPopupForm.FOwner.SetFocus;
     FPopupForm.FOwner.SelectAll;
-//    FOwner.DoAfterHide;  popup window //for handling AfterHide event
     FPopupForm.Release;
     FPopupForm := nil;
   end;
 end;
 
+{$IF CompilerVersion > 22.0}
+function HookFormProc(Wnd: HWND; Msg, wParam, lParam: LONG_PTR): LONG_PTR; stdcall;
+{$ELSEIF CompilerVersion < 23.0}
 function HookFormProc(Wnd: HWND; Msg, wParam, lParam: LongInt): LongInt; stdcall;
+{$IFEND}
 begin
   if Assigned(FPopupForm) then
   begin
@@ -2254,7 +2262,7 @@ begin
       WM_RBUTTONDOWN,
       WM_PARENTNOTIFY:
       begin
-        HidePopupForm;
+        HidePopupForm();
         Result := DefWindowProc(Wnd, Msg, wParam, lParam);
       end
       else
@@ -3864,16 +3872,14 @@ procedure TSolarDatePicker.CellDblClick4Close(Sender: TObject);
 begin
   if ReadOnly then
   begin
-    FPopupForm.Close;
-    SetFocus;
+    HidePopupForm();
     exit;
   end;
 
   Text := FCustomSolarCalendar.OutDate;
 
   SetDataFieldValue();
-
-  FPopupForm.Close;   //popup window
+  HidePopupForm();
   FDateKind := FCustomSolarCalendar.FDateKind;
 
   TPublicUtils.SeparateYMD(Text, FCurrYear, FCurrMonth, FCurrDay, FDateKind);
@@ -3899,7 +3905,7 @@ begin
       ScreenWidth := Screen.Width;
       ScreenHeight := Screen.Height;
 
-      HidePopupForm;
+      HidePopupForm();
 
       FPopupForm := TPopupForm.Create(Self);
       FPopupForm.Position := poDesigned;
@@ -4906,7 +4912,7 @@ end;
 
 procedure TSolarDatePicker.Close;
 begin
-  FPopupForm.Close;
+  HidePopupForm();
 end;
 
 procedure TSolarDatePicker.Drop;
@@ -5133,12 +5139,12 @@ begin
   begin
     if ReadOnly then
     begin
-      FPopupForm.Close;
+      HidePopupForm();
       exit;
     end;
 
     Text := FCustomSolarCalendar.OutDate;
-    FPopupForm.Close;
+    HidePopupForm();
     FDateKind := FCustomSolarCalendar.FDateKind;
 
     TPublicUtils.SeparateYMD(Text, FCurrYear, FCurrMonth, FCurrDay, FDateKind);
@@ -5319,13 +5325,13 @@ end;
 procedure TPopupForm.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if Key = 27 then
-    Close
+    HidePopupForm()
   else
   if Key = vk_return then
   begin
     if ActiveControl <> nil then
       if ActiveControl.ClassType = TSolarGrid then //TStringGrid
-        FPopupForm.Close
+        HidePopupForm()
       else
         FOwner.SolarCalendar.FGrid.SetFocus;
   end;
@@ -5335,20 +5341,36 @@ end;
 
 procedure TPopupForm.HookForm;
 var
-  lLongValue: LongInt;
+  {$IF CompilerVersion > 22.0}
+  WindowAttribute: LONG_PTR;
+  {$ELSE}
+  WindowAttribute: LongInt;
+  {$IFEND}
 begin
   FHookedForm := GetParentForm(FOwner);
 
   if not Assigned(FHookedForm) then
     Exit;
 
-  lLongValue := GetWindowLong(FHookedForm.Handle, GWL_WNDPROC);
+  {$IF CompilerVersion > 22.0}
+  WindowAttribute := GetWindowLongPtr(FHookedForm.Handle, GWLP_WNDPROC);
+  {$ELSE}
+  WindowAttribute := GetWindowLong(FHookedForm.Handle, GWL_WNDPROC);
+  {$IFEND}
 
-  if lLongValue = LongInt(@HookFormProc) then
+  {$IF CompilerVersion > 22.0}
+  if WindowAttribute = LONG_PTR(@HookFormProc) then
+  {$ELSE}
+  if WindowAttribute = LongInt(@HookFormProc) then
+  {$IFEND}
     Exit;
 
-  FOrgFormProc := Pointer(lLongValue);
+  FOrgFormProc := Pointer(WindowAttribute);
+  {$IF CompilerVersion > 22.0}
+  SetWindowLongPtr(FHookedForm.Handle, GWLP_WNDPROC, LONG_PTR(@HookFormProc));
+  {$ELSE}
   SetWindowLong(FHookedForm.Handle, GWL_WNDPROC, LongInt(@HookFormProc));
+  {$IFEND}
 end;
 
 procedure TPopupForm.UnhookForm;
@@ -5359,7 +5381,11 @@ begin
   if not Assigned(FOrgFormProc) then
     Exit;
 
+  {$IF CompilerVersion > 22.0}
+  SetWindowLongPtr(FHookedForm.Handle, GWLP_WNDPROC, LONG_PTR(FOrgFormProc));
+  {$ELSE}
   SetWindowLong(FHookedForm.Handle, GWL_WNDPROC, LongInt(FOrgFormProc));
+  {$IFEND}
 
   FOrgFormProc := nil;
   FHookedForm := nil;
