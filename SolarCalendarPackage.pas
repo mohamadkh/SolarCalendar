@@ -2247,7 +2247,7 @@ end;
 
 {$IF CompilerVersion > 22.0}
 function HookFormProc(Wnd: HWND; Msg, wParam, lParam: LONG_PTR): LONG_PTR; stdcall;
-{$ELSEIF CompilerVersion < 23.0}
+{$ELSE}
 function HookFormProc(Wnd: HWND; Msg, wParam, lParam: LongInt): LongInt; stdcall;
 {$IFEND}
 begin
