@@ -25,7 +25,7 @@
 
 
  {*********************************************************}
- {*           Solar Calendar Package v3.7                 *}
+ {*           Solar Calendar Package v3.7.2               *}
  {*********************************************************}
 
  {*********************************************************}
@@ -274,6 +274,11 @@
 {*   - version 3.7.2 *}
 {*   - Bug fix : Fixed the bug of increasing the Day part by pressing the up arrow key(TSolarDatePicker) *}
 {*   - Bug fix : Access Violation When the calendar button is pressed on Windows 64 bit *}
+
+
+{*   - February 2025 - Bahman 1403 *}
+{*   - version 3.7.x *}
+{*   - Bug fix : delete slash character when press backspace *}
 
 
 unit SolarCalendarPackage;
@@ -4402,7 +4407,6 @@ begin
   iCaretPos := 0;
   if FAutoCheck then
   begin
-//    if (Key in ['0'..'9']) then
     {$IFDEF UNICODE}
     if CharInSet(Key, ['0'..'9']) then
       {$ELSE}
@@ -4436,11 +4440,9 @@ begin
       if (Length(Self.Text) < 10) and (Length(Self.Text) >= 8) then // day
       begin
         if Self.SelStart in [8..10] then
-          //if (DayValidityCheck(Text, Key)) then
-            if Length(sDPart) < 2 then
-              InsertChar(Self.Text, Key, Self.SelStart)
-            else
-          //else
+          if Length(sDPart) < 2 then
+            InsertChar(Self.Text, Key, Self.SelStart)
+          else
         else
         if Self.SelStart in [5..7] then
         begin
@@ -4481,7 +4483,6 @@ begin
         InsertChar(Self.Text, Key, Self.SelStart);
     end
     else
-//    if (key in[#8]) then
     {$IFDEF UNICODE}
     if CharInSet(Key, [#8]) then
     {$ELSE}
@@ -4525,6 +4526,13 @@ begin
               Dec(iCaretPos);
             end;
           end;
+        end
+        else
+        if sText[Self.SelStart] = '/' then
+        begin
+          Delete(sText, Self.SelStart, 1);
+          iCaretPos := Self.SelStart - 1;
+          Dec(iCaretPos);
         end;
       end;
 
@@ -4537,8 +4545,6 @@ begin
       InsertChar(Self.Text, Key, Self.SelStart);
       Key := #0;
     end;
-
-//    key := #0;
   end;
 
   inherited;
