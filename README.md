@@ -15,8 +15,8 @@ In **2008**, the source of this collection was published for the first time on S
 <br>
 
 ## Features
-- Contains components and classes for Borland Delphi 7, 2005, 2006, CodeGear Delphi 2007-2009, Embarcadero RAD Studio 2010, XE-XE10, Delphi 11.x, Delphi 12.x
-- Switch between Persian and Christian(gregorian) interface and vice versa (32 bit & 64 bit)
+- Contains components and classes for Borland Delphi 7, 2005, 2006, CodeGear Delphi 2007-2009, Embarcadero RAD Studio 2010, XE-XE10, Delphi 11.x, Delphi 12.x (32-bit & 64-bit)
+- Switch between Persian and Christian(gregorian) interface and vice versa.
 - Data-aware (DataField)
 - Too many functions for working with Date(IncYear, IncMonth, IncDay, DaysBetween, GotoMonth, ConvertDate, ...)
 - Use date calculation functions independently (TPublicUtils)
