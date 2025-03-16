@@ -276,9 +276,10 @@
 {*   - Bug fix : Access Violation When the calendar button is pressed on Windows 64 bit *}
 
 
-{*   - February 2025 - Bahman 1403 *}
-{*   - version 3.7.x *}
+{*   - March 2025 - Esfand 1403 *}
+{*   - version 3.7.4 *}
 {*   - Bug fix : delete slash character when press backspace *}
+{*   - Improvement: Add ResetToDay procedure to set Textbox to today's date *}
 
 
 unit SolarCalendarPackage;
@@ -678,7 +679,7 @@ type
     procedure SetComboBox();
     procedure SetInDate(const Value: String);
     Procedure WMSize(var Message: TWMSize); Message WM_SIZE;
-    procedure SetToDay;
+    procedure SetToDay();
     
     procedure SetAbout(const Value: String);
     function GetPrevMonthDays: integer;
@@ -776,6 +777,7 @@ type
     function YMDScript(MonthType: TMonthType = mtAlphabet; Divider: string = ' '): string; overload;
     function WeekOfTheYear: integer; overload;
     function WeekOfTheYear(ADate: string; ADateKind: TDateKind): integer; overload;
+    procedure ResetToDay();
     property Canvas: TCanvas read GetCanvas;
     Property InDate: String Read FInDate Write SetInDate;
     property MonthName: string Read GetMonthName;
@@ -946,6 +948,7 @@ type
     function WeekOfTheYear: integer; overload;
     function WeekOfTheYear(ADate: string; ADateKind: TDateKind): integer; overload;
     function Len: integer;
+    procedure ResetToDay();
     procedure Drop;
     procedure Close;
     property Year: integer read GetYear write SetYear;
@@ -1067,6 +1070,7 @@ type
     class function GregorianToSolar(AMiladiDate: string): string; overload;
     class function SolarToGregorian(ASolarDate: string): string; overload;
     class function FixGregorianDate(ADate: string): string;
+    class function GetToday(ADateKind: TDateKind): string;
   end;
 
 
@@ -1633,6 +1637,15 @@ begin
   SeparateYMD(ASolarDate, dYear, dMonth, dDay, dkSolar);
   SolarToGregorian(dYear, dMonth, dDay);
   Result := ConcatenateDate(dYear, dMonth, dDay, dkGregorian);
+end;
+
+class function TPublicUtils.GetToday(ADateKind: TDateKind): string;
+begin
+  if ADateKind = dkSolar then
+    Result := GregorianToSolar(Date())
+  else
+  if ADateKind = dkGregorian then
+    Result := DateToStr(Date());
 end;
 
 class function TPublicUtils.GetWeekOfTheYear(ADate: string; DateKind: TDateKind): word;
@@ -5106,6 +5119,11 @@ begin
 end;
 
 
+procedure TSolarDatePicker.ResetToDay();
+begin
+  Text := TPublicUtils.GetToday(FDateKind);
+end;
+
 function TSolarDatePicker.DayScript(Day: integer): string;
 begin
   if Day <> 0 then
@@ -5221,10 +5239,10 @@ begin
   inherited;
 end;
 
-procedure TCustomSolarCalendar.SetToDay;
-Var
+procedure TCustomSolarCalendar.SetToDay();
+var
   LocalYear, LocalMonth, LocalDay: Word;
-Begin
+begin
   DecodeDate(Date(), LocalYear, LocalMonth, LocalDay);
 
   if FDateKind = dkSolar then
@@ -5235,7 +5253,7 @@ Begin
   end
   else
     FToDay.Caption := Format(ST_ENGLISHTODAY, [TPublicUtils.ConcatenateDate(LocalYear, LocalMonth, LocalDay, FDateKind)]);
-End;
+end;
 
 function TSolarMonthCalendar.GetDay: integer;
 begin
@@ -5831,6 +5849,11 @@ begin
   inherited;
 //  if Assigned(FGrid) then
 //    FGrid.gr_Paint;
+end;
+
+procedure TCustomSolarCalendar.ResetToDay;
+begin
+  InDate := TPublicUtils.GetToday(FDateKind);
 end;
 
 { TSolarTopPanel }
