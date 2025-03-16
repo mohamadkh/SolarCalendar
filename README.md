@@ -10,12 +10,12 @@
 SolarCalendar is a collection of components for Delphi developers and specially for Persian language developers. The package has got set of components for showing and selecting Persian/Iranian/Solar/Shamsi/Jalali date in Persian/Shamsi and Christian(gregorian) interface and many more functions. I started to write a commercial calendar components for Delphi, then I noticed that my calendar component and its features got bigger and bigger. So I decided to share it with the Delphi developers community in hope it will be useful.
 
 
-In **2008**, the source of this collection was published for the first time on SourceForge and Barnamaenevis.org sites.
+In **2008**, the source of this collection was published for the first time on SourceForge and Barnamenevis.org sites.
 <br>
 <br>
 
 ## Features
-- Contains components and classes for Borland Delphi 7, 2005, 2006, CodeGear Delphi 2007-2009, Embarcadero RAD Studio 2010, XE-XE10, Delphi 11.x, Delphi 12.x
+- Contains components and classes for Borland Delphi 7, 2005, 2006, CodeGear Delphi 2007-2009, Embarcadero RAD Studio 2010, XE-XE10, Delphi 11.x, Delphi 12.x (32-bit & 64-bit)
 - Switch between Persian and Christian(gregorian) interface and vice versa.
 - Data-aware (DataField)
 - Too many functions for working with Date(IncYear, IncMonth, IncDay, DaysBetween, GotoMonth, ConvertDate, ...)
