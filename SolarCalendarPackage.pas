@@ -267,7 +267,8 @@
 {*   - version 3.7 *}
 {*   - Bug fix : fix TPublicUtils.GregorinanToSolar function result *}
 {*   - Bug fix : fix current day hint on change layout event  *}
-{*   - Add AutoCompleteOnMonthAndDay property : If the Month or Day section is a single character, a zero character is added to the left side of that section *}
+{*   - Improvement : Add AutoCompleteOnMonthAndDay property, If the Month or Day section is a single character,
+{                    a zero character is added to the left side of that section *}
 
 
 {*   - January 2025 - Dey 1403 *}
@@ -280,6 +281,12 @@
 {*   - version 3.7.4 *}
 {*   - Bug fix : delete slash character when press backspace *}
 {*   - Improvement: Add ResetToDay procedure to set Textbox to today's date *}
+
+
+{*   - March 2025 - Ordeebehesht 1404 *}
+{*   - version 3.7.x *}
+{*   - Bug fix : disable key when Readonly is true, no up/down/delete/backspace keys,... *}
+
 
 
 unit SolarCalendarPackage;
@@ -4416,8 +4423,11 @@ var
   iCaretPos: integer;
   sYPart, sMPart, sDPart: string;
   sTemp: string;
+  CapturedKey: char;
 begin
   iCaretPos := 0;
+  CapturedKey := Key;
+
   if FAutoCheck then
   begin
     {$IFDEF UNICODE}
@@ -4493,7 +4503,7 @@ begin
       end
       else
       if (Length(sYPart) < 4) and (Self.SelStart in [0..4]) then
-        InsertChar(Self.Text, Key, Self.SelStart);
+        InsertChar(Self.Text, CapturedKey, Self.SelStart);
     end
     else
     {$IFDEF UNICODE}
@@ -4624,38 +4634,41 @@ begin
 
       if (Self.SelStart in [0..4]) then
       begin
-        if Length(Trim(sYPart)) = 4 then
-          Self.Text := AddYearPart + '/' + GetMonthPart + '/' + GetDayPart
-        else
-          Self.Text := IntToStr(Year) + '/' + GetMonthPart + '/' + GetDayPart;
+        if not ReadOnly then
+          if Length(Trim(sYPart)) = 4 then
+            Self.Text := AddYearPart + '/' + GetMonthPart + '/' + GetDayPart
+          else
+            Self.Text := IntToStr(Year) + '/' + GetMonthPart + '/' + GetDayPart;
 
         SelectYearPart();
       end
       else
       if (Self.SelStart in [5..7]) then
       begin
-        if Length(Trim(sMPart)) = 2 then
-          Self.Text := GetYearPart + '/' + AddMonthPart + '/' + GetDayPart
-        else
-        if Length(Trim(sMPart)) = 0 then
-          if Month >= 10 then
-            Self.Text := GetYearPart + '/' + IntToStr(Month) + '/' + GetDayPart
+        if not ReadOnly then
+          if Length(Trim(sMPart)) = 2 then
+            Self.Text := GetYearPart + '/' + AddMonthPart + '/' + GetDayPart
           else
-            Self.Text := GetYearPart + '/0' + IntToStr(Month) + '/' + GetDayPart;
+          if Length(Trim(sMPart)) = 0 then
+            if Month >= 10 then
+              Self.Text := GetYearPart + '/' + IntToStr(Month) + '/' + GetDayPart
+            else
+              Self.Text := GetYearPart + '/0' + IntToStr(Month) + '/' + GetDayPart;
 
         SelectMonthPart();
       end
       else
       if (Self.SelStart in [8..10]) then
       begin
-        if Length(Trim(sDPart)) = 2 then
-          Self.Text := GetYearPart + '/' + GetMonthPart + '/' + AddDayPart
-        else
-        if Length(Trim(sDPart)) = 0 then
-          if Day > 10 then
-            Self.Text := GetYearPart + '/' + GetMonthPart + '/' + IntToStr(Day)
+        if not ReadOnly then
+          if Length(Trim(sDPart)) = 2 then
+            Self.Text := GetYearPart + '/' + GetMonthPart + '/' + AddDayPart
           else
-            Self.Text := GetYearPart + '/' + GetMonthPart + '/0' + IntToStr(Day);
+          if Length(Trim(sDPart)) = 0 then
+            if Day > 10 then
+              Self.Text := GetYearPart + '/' + GetMonthPart + '/' + IntToStr(Day)
+            else
+              Self.Text := GetYearPart + '/' + GetMonthPart + '/0' + IntToStr(Day);
 
         SelectDayPart();
       end;
@@ -4674,38 +4687,41 @@ begin
 
       if (Self.SelStart in [0..4]) then
       begin
-        if Length(Trim(sYPart)) = 4 then
-          Self.Text := DecYearPart + '/' + GetMonthPart + '/' + GetDayPart
-        else
-          Self.Text := IntToStr(Year) + '/' + GetMonthPart + '/' + GetDayPart;
+        if not ReadOnly then
+          if Length(Trim(sYPart)) = 4 then
+            Self.Text := DecYearPart + '/' + GetMonthPart + '/' + GetDayPart
+          else
+            Self.Text := IntToStr(Year) + '/' + GetMonthPart + '/' + GetDayPart;
 
         SelectYearPart();
       end
       else
       if (Self.SelStart in [5..7]) then
       begin
-        if Length(Trim(sMPart)) = 2 then
-          Self.Text := GetYearPart + '/' + DecMonthPart + '/' + GetDayPart
-        else
-        if Length(Trim(sMPart)) = 0 then
-          if Month >= 10 then
-            Self.Text := GetYearPart + '/' + IntToStr(Month) + '/' + GetDayPart
+        if not ReadOnly then
+          if Length(Trim(sMPart)) = 2 then
+            Self.Text := GetYearPart + '/' + DecMonthPart + '/' + GetDayPart
           else
-            Self.Text := GetYearPart + '/0' + IntToStr(Month) + '/' + GetDayPart;
+          if Length(Trim(sMPart)) = 0 then
+            if Month >= 10 then
+              Self.Text := GetYearPart + '/' + IntToStr(Month) + '/' + GetDayPart
+            else
+              Self.Text := GetYearPart + '/0' + IntToStr(Month) + '/' + GetDayPart;
 
         SelectMonthPart();
       end
       else
       if (Self.SelStart in [8..10]) then
       begin
-        if Length(Trim(sDPart)) = 2 then
-          Self.Text := GetYearPart + '/' + GetMonthPart + '/' + DecDayPart
-        else
-        if Length(Trim(sDPart)) = 0 then
-          if Day > 10 then
-            Self.Text := GetYearPart + '/' + GetMonthPart + '/' + IntToStr(Day)
+        if not ReadOnly then
+          if Length(Trim(sDPart)) = 2 then
+            Self.Text := GetYearPart + '/' + GetMonthPart + '/' + DecDayPart
           else
-            Self.Text := GetYearPart + '/' + GetMonthPart + '/0' + IntToStr(Day);
+          if Length(Trim(sDPart)) = 0 then
+            if Day > 10 then
+              Self.Text := GetYearPart + '/' + GetMonthPart + '/' + IntToStr(Day)
+            else
+              Self.Text := GetYearPart + '/' + GetMonthPart + '/0' + IntToStr(Day);
 
         SelectDayPart();
       end;
@@ -4739,30 +4755,35 @@ begin
       end;
     end
     else
-    if (Key = 46) then
+    if (Key in [VK_DELETE, VK_BACK]) then
     begin
       key := 0;
-      if Self.SelLength = 10 then
+
+      if not ReadOnly then
       begin
-        Self.Text := '    /  /  ';
-        SelectYearPart();
-      end
-      else
-      if (Self.SelStart in [0..4]) and (Self.SelLength = 4) then
-      begin
-        Self.Text := '    /' + GetMonthPart + '/' + GetDayPart;
-        SelectYearPart();
-      end
-      else
-      if (Self.SelStart in [5..7]) and (Self.SelLength = 2) then
-      begin
-        Self.Text := GetYearPart + '/  /' + GetDayPart;
-        SelectMonthPart();
-      end;
-      if (Self.SelStart in [8..10]) and (Self.SelLength = 2) then
-      begin
-        Self.Text := GetYearPart + '/' + GetMonthPart + '/  ';
-        SelectDayPart();
+        if Self.SelLength = 10 then
+        begin
+          Self.Text := '    /  /  ';
+          SelectYearPart();
+        end
+        else
+        if (Self.SelStart in [0..4]) and (Self.SelLength = 4) then
+        begin
+          Self.Text := '    /' + GetMonthPart + '/' + GetDayPart;
+          SelectYearPart();
+        end
+        else
+        if (Self.SelStart in [5..7]) and (Self.SelLength = 2) then
+        begin
+          Self.Text := GetYearPart + '/  /' + GetDayPart;
+          SelectMonthPart();
+        end;
+
+        if (Self.SelStart in [8..10]) and (Self.SelLength = 2) then
+        begin
+          Self.Text := GetYearPart + '/' + GetMonthPart + '/  ';
+          SelectDayPart();
+        end;
       end;
     end;
 
@@ -4770,7 +4791,7 @@ begin
     if key = VK_DOWN then
       DoButtonClick
     else
-    if Key in [68, 100] then
+    if (not ReadOnly) and (Key in [68, 100]) then
     begin
       Text := TPublicUtils.FillDate(FDateKind);
       SetDataFieldValue();
