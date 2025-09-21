@@ -19,9 +19,9 @@ In **2008**, the source of this collection was published for the first time on S
 - Switch between Persian and Christian(gregorian) interface and vice versa.
 - Data-aware (DataField)
 - Too many functions for working with Date(IncYear, IncMonth, IncDay, DaysBetween, GotoMonth, ConvertDate, ...)
-- Use date calculation functions independently (TPublicUtils)
+- The ability to use date calculation functions independently without the need for a calendar component (TPublicUtils)
 - Customizable Interface (Include various themes)
-- The entered date is automatically checked (AutoCheck)
+- The entered date is automatically checked using the AutoCheck property.
 - Customization of exception messages
 - Handle Change layout, Button click events
 - Includes complete guide as a PDF file
